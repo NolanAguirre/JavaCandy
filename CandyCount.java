@@ -1,22 +1,23 @@
 import javax.swing.JTextField;
 public class CandyCount {
 	private int candies;
-	JTextField text;
-	public CandyCount(JTextField display){
-		candies = 0;
-		text = display;
-		Tick upCount = new Tick(this);
+    private Store store;
+	public CandyCount(Store store){
+        this.store = store;
+        candies = 0;
 	}
-	public void addCandy(int candies){
+	public void add(int candies){
 		this.candies += candies;
+        update();
 	}
-	public void addCandy(){
+	public void add(){
 		candies++;
+        update();
 	}
+    public void update(){
+        store.gui.candyAmountDisplay.setText(""+ candies);
+    }
 	public int getCandies(){
 		return candies;
-	}
-	private void update(){
-		text.setText("" +candies);
-	}
+    }
 }

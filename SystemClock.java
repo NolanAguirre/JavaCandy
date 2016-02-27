@@ -1,27 +1,25 @@
 import java.util.Timer;
 import java.util.TimerTask;
 public class SystemClock{
-  int counter;
-  Timer timer;
-  Event event;
-  public SystemClock(){
+  private int counter;
+  private Timer timer;
+  private Store store;
+  public SystemClock(Store store){
+    this.store = store;
     timer = new Timer();
-    timer.scheduleAtFixedRate(new Task(), 1000, 1000);
+    timer.scheduleAtFixedRate(new Tick(), 1000, 1000);
   }
   private void update(){
-    event.candyCountupdate();
-    if(counter % 3000 == 0 && !event.mob.inBattle()){
-      event.mobAttack();
+    store.candyCount.add();
+    if(counter % 3000 == 0 && !store.mob.inBattle()){
+      store.mob.mobAttack();
     }
-    event.candyCountupdate();
   }
-  class Tick{
-		class Task extends TimerTask{
+		class Tick extends TimerTask{
 			@Override
 		    public void run(){
-          counter++;
-          update();
+                counter++;
+                store.systemClock.update();
 		    }
 		}
-	}
 }

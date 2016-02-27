@@ -1,35 +1,36 @@
 public class Mob{
-  private Player player;
   private boolean inBattle;
   private int attack;
   private int hp;
-  private Event event;
-  public Mob(Player player, Event event){
-    this.player = player;
-    this.event = event;
+  private Store store;
+  public Mob(Store store){
+    this.store = store;
   }
   public void mobAttack(){
+    int tempHp = store.player.getHp();
     inBattle = true;
-    hp = (Integer)(Math.random() + player.getLevel()) * 12);
-    attack = (Integer)((Math.random() + player.getLevel()) * 10);
-    display.promptAttack();
-    while(hp >= 0 && player.getHp() >= 0){
-      event.playerHitMob();
-      player.damage(mob.attack());
-      event.mobHitPlayer();
+    hp = (int)(Math.random() + store.player.getLevel()) * 12;
+    attack = (int)(Math.random() + store.player.getLevel()) * 10;
+    store.gui.promptAttack();
+    while(hp >= 0 && store.player.getHp() >= 0){
+      hp -= store.player.attack();
+      store.gui.playerHitMob();
+      store.player.damage(attack());
+      store.gui.mobHitPlayer();
     }
     if(hp <= 0){
-      display.playerWinner();
+      store.gui.playerWinner();
+      store.player.addExp();
     }else{
-      display.mobWinner();
+      store.gui.mobWinner();
     }
-    display.endBattle();
     inBattle = false;
+    store.player.setHp(tempHp);
   }
   private int attack(){
-    return (Integer)((math.random() * 3) + attack);
-  }
-  public boolean inBattle(){
-    return inBattle;
-  }
+    return ((int)(Math.random() * 3) + attack);
+    }
+    public boolean inBattle(){
+        return inBattle;
+    }
 }
