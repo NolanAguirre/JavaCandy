@@ -15,7 +15,7 @@ public class CandyCount {
         update();
 	}
     public void update(){
-        store.gui.candyAmountDisplay.setText(""+ candies);
+        //store.gui.candyAmountDisplay.setText(""+ candies);
     }
 	public int getCandies(){
 		return candies;

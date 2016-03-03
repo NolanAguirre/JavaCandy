@@ -13,14 +13,10 @@ import java.awt.Rectangle;
 public class Board extends JPanel implements Runnable{
     private final int B_WIDTH = 700;
     private final int B_HEIGHT = 700;
-    private final int INITIAL_X = 0;
-    private final int INITIAL_Y = 0;
     private final int DELAY = 20;
     private Image person;
     private Image map;
     private Thread animator;
-    private int x;
-    private int y;
     private Store store;
     Map currentMap;
     public enum Map{
@@ -63,8 +59,6 @@ public class Board extends JPanel implements Runnable{
         requestFocusInWindow();
         loadImage();
         loadMap();
-        x = INITIAL_X;
-        y = INITIAL_Y;
     }
     @Override
     public void addNotify() {
@@ -79,8 +73,8 @@ public class Board extends JPanel implements Runnable{
         drawPerson(g);
     }
     private void drawPerson(Graphics g) {
-        g.drawImage(person, x, y, this);
-        Rectangle hitBox = new Rectangle(x, y, 65, 75);
+        g.drawImage(person, store.player.getX(), store.player.getY(), this);
+        //Rectangle hitBox = new Rectangle(x, y, 65, 75);
         Toolkit.getDefaultToolkit().sync();
     }
     private void drawMap(Graphics g) {
@@ -88,12 +82,6 @@ public class Board extends JPanel implements Runnable{
         Toolkit.getDefaultToolkit().sync();
     }
     private void cycle() {
-        x += store.getX();
-        y += store.getY();
-        if (y > B_HEIGHT) {
-            y = INITIAL_Y;
-            x = INITIAL_X;
-        }
     }
     @Override
     public void run() {

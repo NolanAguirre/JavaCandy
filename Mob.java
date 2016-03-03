@@ -11,18 +11,18 @@ public class Mob{
     inBattle = true;
     hp = (int)(Math.random() + store.player.getLevel()) * 12;
     attack = (int)(Math.random() + store.player.getLevel()) * 10;
-    store.gui.promptAttack();
+    //store.gui.promptAttack();
     while(hp >= 0 && store.player.getHp() >= 0){
       hp -= store.player.attack();
-      store.gui.playerHitMob();
+     // store.gui.playerHitMob();
       store.player.damage(attack());
-      store.gui.mobHitPlayer();
+     // store.gui.mobHitPlayer();
     }
     if(hp <= 0){
-      store.gui.playerWinner();
+    //  store.gui.playerWinner();
       store.player.addExp();
     }else{
-      store.gui.mobWinner();
+      //store.gui.mobWinner();
     }
     inBattle = false;
     store.player.setHp(tempHp);

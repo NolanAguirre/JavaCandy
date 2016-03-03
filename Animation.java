@@ -30,20 +30,16 @@ public class Animation extends JFrame {
         @Override
         public void keyTyped(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_RIGHT ) {
-                store.setX(2);
-                store.setY(0);
+                store.player.move(2,0);
             }
             else if (e.getKeyCode() == KeyEvent.VK_LEFT ) {
-                store.setX(-2);
-                store.setY(0);
+                store.player.move(-2,0);
             }
             else if (e.getKeyCode() == KeyEvent.VK_UP ) {
-                store.setX(0);
-                store.setY(-2);
+                store.player.move(0,-2);
             }
             else if (e.getKeyCode() == KeyEvent.VK_DOWN ) {
-                store.setX(0);
-                store.setY(2);
+                store.player.move(0,2);
             }
             else{
             }
@@ -52,20 +48,16 @@ public class Animation extends JFrame {
         @Override
         public void keyPressed(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_RIGHT ) {
-                store.setX(2);
-                store.setY(0);
+                store.player.move(2,0);
             }
             else if (e.getKeyCode() == KeyEvent.VK_LEFT ) {
-                store.setX(-2);
-                store.setY(0);
+                store.player.move(-2,0);
             }
             else if (e.getKeyCode() == KeyEvent.VK_UP ) {
-                store.setX(0);
-                store.setY(-2);
+                store.player.move(0,-2);
             }
             else if (e.getKeyCode() == KeyEvent.VK_DOWN ) {
-                store.setX(0);
-                store.setY(2);
+                store.player.move(0,2);
             }
             else{
             }
@@ -73,8 +65,8 @@ public class Animation extends JFrame {
 
         @Override
         public void keyReleased(KeyEvent e) {
-            store.setX(0);
-            store.setY(0);
+            store.player.move(0,0);
+            store.player.move(0,0);
         }
     }
 }

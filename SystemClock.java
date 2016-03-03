@@ -11,15 +11,12 @@ public class SystemClock{
   }
   private void update(){
     store.candyCount.add();
-    if(counter % 3000 == 0 && !store.mob.inBattle()){
-      store.mob.mobAttack();
-    }
   }
 		class Tick extends TimerTask{
 			@Override
 		    public void run(){
-               	 	counter++;
-                	store.systemClock.update();
+               	counter++;
+                store.systemClock.update();
 		    }
 		}
 }
