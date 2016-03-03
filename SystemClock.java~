@@ -18,8 +18,8 @@ public class SystemClock{
 		class Tick extends TimerTask{
 			@Override
 		    public void run(){
-               	 	counter++;
-                	store.systemClock.update();
+                counter++;
+                store.systemClock.update();
 		    }
 		}
 }
