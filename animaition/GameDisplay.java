@@ -6,15 +6,15 @@ import java.io.FileNotFoundException;
 import javax.swing.JPanel;
 
 import map.World;
+import player.PlayerI;
 import player.Player;
-import sprite.Movable;
 import sprite.SpriteTile;
 public class GameDisplay extends JPanel implements Runnable{
 	private int count;
-	private final Movable player;
+	private final PlayerI player;
 	private World world;
 	private static final long serialVersionUID = 1L;
-	public GameDisplay(Movable player){
+	public GameDisplay(PlayerI player){
 		this.player = player;
 		try {
 			world = new World();
@@ -44,12 +44,12 @@ public class GameDisplay extends JPanel implements Runnable{
 		}
 	}
 	private void renderPerson(Graphics g){
-		if(count % 50 > 24){
-			g.drawImage(player.getDefaultImg(), player.getX(), player.getY(), null);
+		if(count % 20 > 9){
+			g.drawImage(player.getDefaultImg(), player.getX()%640, player.getY()%640, null);
 		}else if(!player.isMoving()){
-			g.drawImage(player.getTransitionImg(), player.getX(), player.getY(), null);
+			g.drawImage(player.getTransitionImg(), player.getX()%640, player.getY()%640, null);
 		}else{
-			g.drawImage(player.getMovingTransitionImg(), player.getX(), player.getY(), null);
+			g.drawImage(player.getMovingImg(), player.getX()%640, player.getY()%640, null);
 		}
 	}
     @Override

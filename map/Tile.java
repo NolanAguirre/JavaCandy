@@ -28,7 +28,6 @@ public class Tile implements Sprite{
 		        default:
 		        	DEFAULT = ImageIO.read(Sprite.SPRITESHEET).getSubimage(192,0,Sprite.HEIGHT,Sprite.WIDTH);
 		            TRANSITION = ImageIO.read(Sprite.SPRITESHEET).getSubimage(192,0,Sprite.HEIGHT,Sprite.WIDTH);
-		        	
 			}
         }catch(IOException ex){
             throw(new Error("File Not Found"));
