@@ -2,6 +2,7 @@ package player;
 
 import java.awt.Image;
 import java.io.IOException;
+import java.awt.Rectangle;
 
 import javax.imageio.ImageIO;
 
@@ -13,10 +14,13 @@ public class Player implements PlayerI{
 	private int x;
 	private int y;
 	private boolean isMoving;
+	private boolean freezeUp;
+	private boolean freezeDown;
+	private boolean freezeLeft;
+	private boolean freezeRight;
 	public Player(){
-		x = 100;
-		y = 100;
-		generateRect();
+		x = 375;
+		y = 375;
         DEFAULT = PlayerSprite.DEFAULT_DEFAULT;
         TRANSITION = PlayerSprite.DEFAULT_TRANSITION;
         MOVING = PlayerSprite.DEFAULT_MOVING;
@@ -61,14 +65,31 @@ public class Player implements PlayerI{
 	}
 	@Override
 	public int getY() {
-		// TODO Auto-generated method stub
 		return y;
 	}
 	@Override
 	public void move(int x, int y) {
-		this.x += x;
-		this.y += y;
-
+		boolean flag = true;
+			if(freezeUp && y < 0){
+				this.x += x;
+				flag = false;
+			}
+			if(freezeDown && y > 0){
+				this.x += x;
+				flag = false;
+			}
+			if(freezeLeft && x < 0 ){
+				this.y += y;
+				flag = false;
+			}
+			if(freezeRight && x > 0){
+				this.y += y;
+				flag = false;
+			}
+			if(flag){
+				this.x += x;
+				this.y += y;
+			}
 	}
 	@Override
 	public void setMoving(boolean foo) {
@@ -83,18 +104,53 @@ public class Player implements PlayerI{
 		}
 	}
 	@Override
-	public void generateRect() {
-		// TODO Auto-generated method stub
+	public synchronized boolean isTouching(Rectangle wall) {
+		Rectangle hitBox = new Rectangle(x,y,32,32);
+		return hitBox.intersects(wall);
+	}
+	public void set(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+	private void preventMotion(Direction direction) {
+		switch(direction){
+		case LEFT:
+			freezeLeft = true;
+			break;
+		case RIGHT:
+			freezeRight = true;
+			break;
+		case UP:
+			freezeUp = true;
+			break;
+		case DOWN:
+			freezeDown = true;
+			break;
+		default:
+			
+		}	
 		
 	}
 	@Override
-	public boolean isTouching() {
-		// TODO Auto-generated method stub
-		return false;
+	public synchronized void preventMotion(Rectangle wall) {
+		if(isTouching(new Rectangle((int)wall.getX()+2,(int)wall.getY()+47,28,1))){
+			preventMotion(Direction.UP);
+		}
+		if(isTouching(new Rectangle((int)wall.getX()+2,(int)wall.getY()-15,28,1))){
+			preventMotion(Direction.DOWN);
+		}
+		if(isTouching(new Rectangle((int)wall.getX()+47,(int)wall.getY()+2,1,28))){
+			preventMotion(Direction.LEFT);
+		}
+		if(isTouching(new Rectangle((int)wall.getX()-15,(int)wall.getY()+2,1,28))){
+			preventMotion(Direction.RIGHT);
+		}
 	}
 	@Override
-	public void moveRect(int x, int y) {
-		// TODO Auto-generated method stub
-		
+	public synchronized  void unfreeze() {
+		freezeUp = false;
+		freezeDown = false;
+		freezeLeft = false;
+		freezeRight = false;	
 	}
 }

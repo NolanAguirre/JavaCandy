@@ -1,7 +1,9 @@
 package sprite;
 
+import java.awt.Rectangle;
+
+
 public interface Collision { // makes and moves hitboxes 
-	void generateRect();
-	boolean isTouching();
-	void moveRect(int x, int y);
+	boolean isTouching(Rectangle wall);
+	void preventMotion(Rectangle wall);
 }

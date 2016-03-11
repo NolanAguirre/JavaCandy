@@ -9,10 +9,10 @@ import player.Player;
 import player.PlayerI;
 
 public class MyFrame extends JFrame {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 	private PlayerI player;
 	public MyFrame(){
-			player = new Player();
+		 player = new Player();
 		 addKeyListener(new CustomKeyListener());
 	     add(new GameDisplay(player));
 	     setResizable(false);
@@ -24,20 +24,20 @@ public class MyFrame extends JFrame {
 	class CustomKeyListener implements KeyListener{
         @Override
         public void keyTyped(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            	player.move(4,0);
+            if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
+            	player.move(2,0);
             	player.setMoving(true);
             }
-            else if (e.getKeyCode() == KeyEvent.VK_LEFT ) {
-            	player.move(-4,0);
+            else if (e.getKeyCode() == KeyEvent.VK_LEFT  || e.getKeyCode() == KeyEvent.VK_A) {
+            	player.move(-2,0);
             	player.setMoving(true);
             }
-            else if (e.getKeyCode() == KeyEvent.VK_UP ) {
-            	player.move(0,-4);
+            else if (e.getKeyCode() == KeyEvent.VK_UP ||  e.getKeyCode() == KeyEvent.VK_W) {
+            	player.move(0,-2);
             	player.setMoving(true);
             }
-            else if (e.getKeyCode() == KeyEvent.VK_DOWN ) {
-            	player.move(0,4);
+            else if (e.getKeyCode() == KeyEvent.VK_DOWN ||  e.getKeyCode() == KeyEvent.VK_S) {
+            	player.move(0,2);
             	player.setMoving(true);
             }
             else{
@@ -45,20 +45,20 @@ public class MyFrame extends JFrame {
         }
         @Override
         public void keyPressed(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_RIGHT ) {
-               player.move(4,0);
+            if (e.getKeyCode() == KeyEvent.VK_RIGHT ||  e.getKeyCode() == KeyEvent.VK_D) {
+               player.move(2,0);
                player.setMoving(true);
             }
-            else if (e.getKeyCode() == KeyEvent.VK_LEFT ) {
-            	player.move(-4,0);
+            else if (e.getKeyCode() == KeyEvent.VK_LEFT ||  e.getKeyCode() == KeyEvent.VK_A ) {
+            	player.move(-2,0);
             	player.setMoving(true);
             }
-            else if (e.getKeyCode() == KeyEvent.VK_UP ) {
-            	player.move(0,-4);
+            else if (e.getKeyCode() == KeyEvent.VK_UP ||  e.getKeyCode() == KeyEvent.VK_W) {
+            	player.move(0,-2);
             	player.setMoving(true);
             }
-            else if (e.getKeyCode() == KeyEvent.VK_DOWN ) {
-            	player.move(0,4);
+            else if (e.getKeyCode() == KeyEvent.VK_DOWN  ||  e.getKeyCode() == KeyEvent.VK_S) {
+            	player.move(0,2);
             	player.setMoving(true);
             }
             else{
