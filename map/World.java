@@ -82,32 +82,33 @@ public class World {
 			return map;
 		}
 		class Tile implements SpriteTile{
-			private final Image DEFAULT;
-			private final Image TRANSITION;
+			private Image DEFAULT;
+			private Image TRANSITION;
 			private int compress;
 			private TileType type;
 			public Tile(TileType type){
 				compress = 1;
 				this.type = type;
-				try{
 					switch(type){
 					case WOOD_FLOOR:
-			            DEFAULT = ImageIO.read(Sprite.SPRITESHEET).getSubimage(288,0,Sprite.HEIGHT,Sprite.WIDTH);
-			            TRANSITION = ImageIO.read(Sprite.SPRITESHEET).getSubimage(288,0,Sprite.HEIGHT,Sprite.WIDTH);
+			            loadImage(26);
 			            break;
 					case WALL:
-						DEFAULT = ImageIO.read(Sprite.SPRITESHEET).getSubimage(320,0,Sprite.HEIGHT,Sprite.WIDTH);
-			            TRANSITION = ImageIO.read(Sprite.SPRITESHEET).getSubimage(320,0,Sprite.HEIGHT,Sprite.WIDTH);
+						loadImage(27);
 			            break;
 					case BRICK: 
-						DEFAULT = ImageIO.read(Sprite.SPRITESHEET).getSubimage(352,0,Sprite.HEIGHT,Sprite.WIDTH);
-			            TRANSITION = ImageIO.read(Sprite.SPRITESHEET).getSubimage(352,0,Sprite.HEIGHT,Sprite.WIDTH);
+						loadImage(28);
 			            break;
 			        default:
-			        	DEFAULT = ImageIO.read(Sprite.SPRITESHEET).getSubimage(384,0,Sprite.HEIGHT,Sprite.WIDTH);
-			            TRANSITION = ImageIO.read(Sprite.SPRITESHEET).getSubimage(384,0,Sprite.HEIGHT,Sprite.WIDTH);
+			        	loadImage(29);
 				}
-		        }catch(IOException ex){
+		        
+			}
+			private void loadImage(int cords){
+				try{
+					DEFAULT = ImageIO.read(Sprite.SPRITESHEET).getSubimage(cords*32,0,Sprite.HEIGHT,Sprite.WIDTH);
+	            	TRANSITION = ImageIO.read(Sprite.SPRITESHEET).getSubimage(cords*32,0,Sprite.HEIGHT,Sprite.WIDTH);
+				}catch(IOException ex){
 		            throw(new Error("File Not Found"));
 		        }
 			}

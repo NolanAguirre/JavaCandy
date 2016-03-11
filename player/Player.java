@@ -8,11 +8,12 @@ import javax.imageio.ImageIO;
 
 
 public class Player implements PlayerI{
-	private PlayerSprite DEFAULT;
-	private PlayerSprite TRANSITION;
-	private PlayerSprite MOVING;
+	private int still;
+	private int transition;
+	private int moving;
 	private int x;
 	private int y;
+	private boolean legs;
 	private boolean isMoving;
 	private boolean freezeUp;
 	private boolean freezeDown;
@@ -21,9 +22,9 @@ public class Player implements PlayerI{
 	public Player(){
 		x = 375;
 		y = 375;
-        DEFAULT = PlayerSprite.DEFAULT_DEFAULT;
-        TRANSITION = PlayerSprite.DEFAULT_TRANSITION;
-        MOVING = PlayerSprite.DEFAULT_MOVING;
+        still = 0;
+        transition = 1;
+        moving = 2;
 	}
 	private Image loadImage(int cord){
 		try{
@@ -34,30 +35,15 @@ public class Player implements PlayerI{
 	}
 	@Override
 	public synchronized Image getDefaultImg() { // not really sure, better to have it and not need it
-		switch(DEFAULT){
-		case DEFAULT_DEFAULT: return loadImage(0);
-		case SWORD_DEFAULT: return loadImage(3);
-		case SHIELD_DEFAULT:return loadImage(6);
-		default: return loadImage(0);
-		}
+		return loadImage(still);
 	}
 	@Override
 	public synchronized Image getTransitionImg() { // not really sure, better to have it and not need it
-		switch(TRANSITION){
-		case DEFAULT_TRANSITION: return loadImage(1);
-		case SWORD_TRANSITION: return loadImage(4);
-		case SHIELD_TRANSITION:return loadImage(7);
-		default: return loadImage(0);
-		}
+		return loadImage(transition);
 	}
 	@Override
 	public synchronized Image getMovingImg() { // not really sure, better to have it and not need it
-		switch(MOVING){
-		case DEFAULT_MOVING: return loadImage(2);
-		case SWORD_MOVING: return loadImage(5);
-		case SHIELD_MOVING:return loadImage(8);
-		default: return loadImage(0);
-		}
+		return loadImage(moving);
 	}
 	@Override
 	public int getX() {
@@ -70,21 +56,51 @@ public class Player implements PlayerI{
 	@Override
 	public void move(int x, int y) {
 		boolean flag = true;
-			if(freezeUp && y < 0){
-				this.x += x;
-				flag = false;
+			if(y < 0){
+				still = 10;
+			    transition = 11;
+			    if(legs){
+			    	moving = 12;	
+			    }else{
+			    	legs = !legs;
+			    	moving = 13;
+			    }
+				if(freezeUp){
+					this.x += x;
+					flag = false;
+				}
 			}
-			if(freezeDown && y > 0){
-				this.x += x;
-				flag = false;
+			if(y > 0){
+				still = 6;
+			    transition = 7;
+			    if(legs){
+				   	moving = 8;	
+				   }else{
+				   	legs = !legs;
+				   	moving = 9;
+				   }
+				if(freezeDown){
+					this.x += x;
+					flag = false;
+				}
 			}
-			if(freezeLeft && x < 0 ){
-				this.y += y;
-				flag = false;
+			if(x < 0 ){
+				still = 3;
+			    transition = 4;
+			    moving = 5;
+				if(freezeLeft){
+					this.y += y;
+					flag = false;
+				}
 			}
-			if(freezeRight && x > 0){
-				this.y += y;
-				flag = false;
+			if(x > 0){
+				 still = 0;
+			     transition = 1;
+			     moving = 2;
+				if(freezeRight){
+					this.y += y;
+					flag = false;
+				}
 			}
 			if(flag){
 				this.x += x;
