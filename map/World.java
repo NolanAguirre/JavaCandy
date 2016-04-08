@@ -1,30 +1,25 @@
 package map;
 
 import java.awt.Image;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 
 import mob.Enemy;
-import player.Mob;
+import mob.Mob;
 import sprite.Sprite;
 import sprite.SpriteTile;
 
 public class World {
 	private Graph graph;
 	private Map current;
-	private ArrayList<String> seeds;
-	public World()  throws FileNotFoundException{
-		seeds = new ArrayList<String>();
-		Scanner scan = new Scanner(new File("mapseed.dat"));
-		while(scan.hasNext()){
-			seeds.add(scan.next());
-		}
-		scan.close();
+	public World(){
+	//	Scanner scan = new Scanner(new File("mapseed.dat"));
+	//	while(scan.hasNext()){
+	//		seeds.add(scan.next());
+	//	}
+	//	scan.close();
 		graph = new Graph();
 		update();
 	}
@@ -48,16 +43,16 @@ public class World {
 		update();
 	}
 	private void update(){
-		current = new Map(seeds.get(graph.getCurrent().getSeed()));
+		current = new Map(graph.getCurrent());
 	}
 	//////////////////////////////// map
 	class Map implements IMap{
 		private String seed;
 		private ArrayList<SpriteTile>map;
-		private ArrayList<Mob> enemys;
+		private ArrayList<Mob> mobs;
 		public Map(String seed){
 			map = new ArrayList<SpriteTile>();
-			enemys = new ArrayList<Mob>();
+			mobs = new ArrayList<Mob>();
 			this.seed = seed;
 			generate();
 		}
@@ -80,7 +75,7 @@ public class World {
 						map.add(new Tile(TileType.WOOD_FLOOR));
 						break; 
 					case 'm':
-						enemys.add(new Enemy(x*32,y*32));
+						mobs.add(new Enemy(x*32,y*32));
 						x--;
 						break;
 					default: 
@@ -109,8 +104,13 @@ public class World {
 				}
 			}
 		}
-		public ArrayList<Mob> getEnemys(){
-			return enemys;
+		public ArrayList<Mob> getMobs(){
+			return mobs;
+		}
+		public void addMob(Mob player){
+			if(!mobs.contains(player)){
+				mobs.add(player);
+			}
 		}
 		public synchronized ArrayList<SpriteTile> getMapLayout() {
 			return map;
@@ -125,13 +125,13 @@ public class World {
 				this.type = type;
 					switch(type){
 					case WOOD_FLOOR:
-			            loadImage(33);
+			            loadImage(13);
 			            break;
 					case WALL:
-						loadImage(34);
+						loadImage(14);
 			            break;
 					case BRICK: 
-						loadImage(35);
+						loadImage(15);
 			            break;
 			        default:
 			        	loadImage(0);
@@ -145,7 +145,7 @@ public class World {
 		        }
 			}
 			@Override
-			public Image getDefaultImg() {
+			public Image getImg() {
 				return DEFAULT;
 			}
 			public TileType getType(){

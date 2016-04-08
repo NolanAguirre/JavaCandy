@@ -1,15 +1,17 @@
 package player;
 
+import mob.Mob;
+
 public class Player extends Mob{
 	public Player(){
 		new MobAnimation();
 		facing = Direction.DOWN;
 		attack = 2;
-		hp = 10000;
+		hp = 100;
 		x = 375;
 		y = 375;
         still = loadImage(1);
-        imageChain = 1;
+        imageChain = new int[]{0,1,2};
 	}
 	@Override
 	public synchronized void move(int x, int y) {
@@ -28,16 +30,16 @@ public class Player extends Mob{
 		facing = dir;
 		switch(dir){
 		case LEFT:
-			imageChain = 5;
+			imageChain = new int[]{3,4,5};
 			break;
 		case DOWN:
-			imageChain = 9;
+			imageChain = new int[]{6,7,6,8};
 			break;
 		case UP:
-			imageChain = 13;
+			imageChain = new int[]{9,10,9,11};
 			break;
 		case RIGHT:
-			imageChain = 1;
+			imageChain = new int[]{0,1,2}; 
 			break;
 		}
 	}

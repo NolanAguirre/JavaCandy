@@ -2,10 +2,11 @@ package map;
 
 import java.util.ArrayList;
 
-import player.Mob;
+import mob.Mob;
 import sprite.SpriteTile;
 
 public interface IMap {
-	public ArrayList<SpriteTile> getMapLayout();
-	public ArrayList<Mob> getEnemys();
+	ArrayList<SpriteTile> getMapLayout();
+	ArrayList<Mob> getMobs();
+	void addMob(Mob player);
 }

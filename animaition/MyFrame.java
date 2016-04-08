@@ -5,8 +5,8 @@ import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
 
+import mob.Mob;
 import player.Direction;
-import player.Mob;
 import player.Player;
 
 public class MyFrame extends JFrame {

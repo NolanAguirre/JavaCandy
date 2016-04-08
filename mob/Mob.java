@@ -1,4 +1,4 @@
-package player;
+package mob;
 
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -7,6 +7,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.imageio.ImageIO;
+
+import player.Combat;
+import player.Direction;
 import sprite.Movable;
 
 public abstract class Mob implements Movable, Combat{
@@ -17,7 +20,7 @@ public abstract class Mob implements Movable, Combat{
 	protected boolean freezeLeft;
 	protected boolean freezeRight;
 	protected Image still;
-	protected int imageChain;
+	protected int[] imageChain;
 	protected int x;
 	protected int y;
 	protected int attack;
@@ -32,15 +35,7 @@ public abstract class Mob implements Movable, Combat{
 		}
 	}
 	@Override
-	public synchronized Image getDefaultImg() { // not really sure, better to have it and not need it
-		return still;
-	}
-	@Override
-	public synchronized Image getTransitionImg() { // not really sure, better to have it and not need it
-		return still;
-	}
-	@Override
-	public synchronized Image getMovingImg() { // not really sure, better to have it and not need it
+	public synchronized Image getImg() { // not really sure, better to have it and not need it
 		return still;
 	}
 	@Override
@@ -171,17 +166,15 @@ public abstract class Mob implements Movable, Combat{
 	}
 	public class MobAnimation {
 		 private Timer timer;
+		 private int image;
 		  public MobAnimation(){
+			image = 0;
 		    timer = new Timer();
 		    timer.scheduleAtFixedRate(new Tick(), 1000, 200);
 		  }
 		  private void update(){
-			  if(imageChain % 4 == 0){
-				  imageChain -= 3;
-			  }
-			//  System.out.println("" + imageCha2in);
-			  still = loadImage(imageChain);
-			  imageChain++;
+			  still = loadImage(imageChain[image%imageChain.length]);
+			  image++;
 		  } 
 			class Tick extends TimerTask{
 				@Override

@@ -4,7 +4,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import player.Direction;
-import player.Mob;
 
 public class Enemy  extends Mob{
 	public Enemy(int x, int y){
@@ -12,11 +11,11 @@ public class Enemy  extends Mob{
 		new MobAnimation();
 		facing = Direction.DOWN;
 		attack = 1;
-		hp = 10000;
+		hp = 10;
 		this.x = x;
 		this.y = y;
-        still = loadImage(6);
-        imageChain = 32;
+        still = loadImage(12);
+        imageChain = new int[]{12};
 	}
 	@Override
 	public void attack(Mob mob){
@@ -26,28 +25,24 @@ public class Enemy  extends Mob{
 	public void move(int x, int y) {
 		boolean flag = true;
 			if(y < 0){
-				still = loadImage(32);
 				if(freezeUp){
 					this.x += x;
 					flag = false;
 				}
 			}
 			if(y > 0){
-				still = loadImage(32);
 				if(freezeDown){
 					this.x += x;
 					flag = false;
 				}
 			}
 			if(x < 0 ){
-				still = loadImage(32);
 				if(freezeLeft){
 					this.y += y;
 					flag = false;
 				}
 			}
 			if(x > 0){
-				 still = loadImage(32);
 				if(freezeRight){
 					this.y += y;
 					flag = false;
