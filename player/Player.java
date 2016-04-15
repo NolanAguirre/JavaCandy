@@ -1,16 +1,22 @@
 package player;
 
+import item.ItemType;
+import item.Items;
+import item.StatusEffect;
 import mob.Mob;
+import player.bag.Bag;
 
 public class Player extends Mob{
+	private Bag bag;
 	public Player(){
+		bag = new Bag();
 		new MobAnimation();
 		facing = Direction.DOWN;
 		attack = 2;
 		hp = 100;
 		x = 375;
 		y = 375;
-        still = loadImage(1);
+        img = loadImage(1);
         imageChain = new int[]{0,1,2};
 	}
 	@Override
@@ -41,6 +47,12 @@ public class Player extends Mob{
 		case RIGHT:
 			imageChain = new int[]{0,1,2}; 
 			break;
+		}
+	}
+	public void useItem(Items item){
+		bag.useItem(item);
+		if(item.getEffect() == StatusEffect.HP && item.getType() == ItemType.POTION){
+			hp += item.getEffectAmount();
 		}
 	}
 }

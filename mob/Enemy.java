@@ -14,7 +14,7 @@ public class Enemy  extends Mob{
 		hp = 10;
 		this.x = x;
 		this.y = y;
-        still = loadImage(12);
+        img = loadImage(12);
         imageChain = new int[]{12};
 	}
 	@Override

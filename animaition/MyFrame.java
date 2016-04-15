@@ -12,10 +12,12 @@ import player.Player;
 public class MyFrame extends JFrame {
 	private static final long serialVersionUID = 2L;
 	private Mob player;
+	private GameDisplay display;
 	public MyFrame(){
 		 player = new Player();
+		 display =  new GameDisplay(player);
 		 addKeyListener(new CustomKeyListener());
-	     add(new GameDisplay(player));
+	     add(display);
 	     setResizable(false);
 	     pack();
 	     setTitle("Candy Box 3");
@@ -76,8 +78,8 @@ public class MyFrame extends JFrame {
             //}
             //if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             //    player.stopAttack();
-             }else{
-            	 
+             }else if(e.getKeyCode() == KeyEvent.VK_E){
+            	 display.setGameState();
             }
         }
         @Override
@@ -89,3 +91,9 @@ public class MyFrame extends JFrame {
         }
     }
 }
+
+
+
+
+
+

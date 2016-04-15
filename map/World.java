@@ -15,11 +15,6 @@ public class World {
 	private Graph graph;
 	private Map current;
 	public World(){
-	//	Scanner scan = new Scanner(new File("mapseed.dat"));
-	//	while(scan.hasNext()){
-	//		seeds.add(scan.next());
-	//	}
-	//	scan.close();
 		graph = new Graph();
 		update();
 	}
@@ -47,9 +42,12 @@ public class World {
 	}
 	//////////////////////////////// map
 	class Map implements IMap{
+		private Chest chest;
 		private String seed;
 		private ArrayList<SpriteTile>map;
 		private ArrayList<Mob> mobs;
+		private int x;
+		private int y;
 		public Map(String seed){
 			map = new ArrayList<SpriteTile>();
 			mobs = new ArrayList<Mob>();
@@ -61,8 +59,8 @@ public class World {
 			return seed;
 		}
 		private void generate(){
-			int x = 0;
-			int y = 0;
+			x = 0;
+		    y = 0;
 			for(char foo : seed.toCharArray()){
 				switch(foo){
 					case 'w': 
@@ -73,11 +71,7 @@ public class World {
 						break;
 					case 'f':
 						map.add(new Tile(TileType.WOOD_FLOOR));
-						break; 
-					case 'm':
-						mobs.add(new Enemy(x*32,y*32));
-						x--;
-						break;
+						break; 				
 					default: 
 						map.add(new Tile(TileType.FILLER));
 				}
@@ -91,15 +85,15 @@ public class World {
 		}
 		private void compress(){
 			int standard = 0;
-			for(int x = 0; x < map.size(); x++){
-				if(x+1 >= map.size()){
+			for(int foo = 0; foo < map.size(); foo++){
+				if(foo+1 >= map.size()){
 					break;
 				}else{
-					if(map.get(x).getType().equals(map.get(x+1).getType())){
-						standard = x;
+					if(map.get(foo).getType().equals(map.get(foo+1).getType())){
+						standard = foo;
 						map.get(standard).compress();
-						map.remove(x+1);
-						x--;
+						map.remove(foo+1);
+						foo--;
 					}
 				}
 			}
@@ -115,6 +109,9 @@ public class World {
 		public synchronized ArrayList<SpriteTile> getMapLayout() {
 			return map;
 		}
+		public Chest getChest(){
+			return chest;
+		}
 		//////////////////////// blocks/tiles
 		class Tile implements SpriteTile{
 			private Image DEFAULT;
@@ -122,9 +119,18 @@ public class World {
 			private TileType type;
 			public Tile(TileType type){
 				compress = 1;
+				double rand = Math.random();
 				this.type = type;
 					switch(type){
 					case WOOD_FLOOR:
+						if(rand > .999 && chest == null){
+							chest = new Chest(x*32,y*32);
+							loadImage(16);
+							this.type = TileType.CHEST;
+							break;
+						}else if(rand > .99){
+							mobs.add(new Enemy(x*32,y*32));
+						}
 			            loadImage(13);
 			            break;
 					case WALL:
@@ -139,7 +145,7 @@ public class World {
 			}
 			private void loadImage(int cords){
 				try{
-					DEFAULT = ImageIO.read(Sprite.SPRITESHEET).getSubimage(cords*32,0,Sprite.HEIGHT,Sprite.WIDTH);
+					DEFAULT = ImageIO.read(Sprite.SPRITESHEET).getSubimage(cords*32,0,32,32);
 				}catch(IOException ex){
 		            throw(new Error("File Not Found"));
 		        }
@@ -157,7 +163,6 @@ public class World {
 			public int getCompress(){
 				return compress;
 			}
-		}
-		
+		}		
 	}
 }

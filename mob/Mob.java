@@ -19,7 +19,7 @@ public abstract class Mob implements Movable, Combat{
 	protected boolean freezeDown;
 	protected boolean freezeLeft;
 	protected boolean freezeRight;
-	protected Image still;
+	protected Image img;
 	protected int[] imageChain;
 	protected int x;
 	protected int y;
@@ -29,14 +29,20 @@ public abstract class Mob implements Movable, Combat{
 	protected boolean isAttacking;
 	protected Image loadImage(int cord){
 		try{
-			return ImageIO.read(Movable.SPRITESHEET).getSubimage(cord*32,0,Movable.HEIGHT,Movable.WIDTH);
+			return ImageIO.read(Movable.SPRITESHEET).getSubimage(cord*32,0,32,32);
 		}catch(IOException ex){
 			throw(new Error("Spritesheet Not Found"));
 		}
 	}
+	public void freeze(){
+		freezeUp = true;
+		freezeDown = true;
+		freezeLeft = true;
+		freezeRight = true;
+	}
 	@Override
 	public synchronized Image getImg() { // not really sure, better to have it and not need it
-		return still;
+		return img;
 	}
 	@Override
 	public int getX() {
@@ -173,7 +179,7 @@ public abstract class Mob implements Movable, Combat{
 		    timer.scheduleAtFixedRate(new Tick(), 1000, 200);
 		  }
 		  private void update(){
-			  still = loadImage(imageChain[image%imageChain.length]);
+			  img = loadImage(imageChain[image%imageChain.length]);
 			  image++;
 		  } 
 			class Tick extends TimerTask{

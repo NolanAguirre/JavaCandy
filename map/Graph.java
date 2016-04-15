@@ -14,19 +14,19 @@ public class Graph {
 	private int x;
 	private int y;
 	private int rooms;
-	private int[][] graph;
+	private byte[][] graph;
 	private ArrayList<String> seeds;
 	private ArrayList<Node> nodes;
 	public Graph(){
 		rooms = 0;
-		x = 499;
-		y = 499;
 		seeds = new ArrayList<String>();
 		nodes = new ArrayList<Node>();
-		graph = new int[1000][1000];
-		for (int[] row: graph){
-		    Arrays.fill(row, -1);
+		graph = new byte[100][100];
+		for (byte[] row: graph){
+		    Arrays.fill(row, (byte)-1);
 		}
+		x = graph.length/2-1;
+		y = graph.length/2-1;
 		generateNodeTypes();
 		graph[x][y] = 0;
 		generate();
@@ -50,7 +50,7 @@ public class Graph {
 	private void generateNodeTypes(){
 		int x = 0;
 		String s = "";
-		while(x < 31){
+		while(x < 37){ // one less than amount of maps
 			ArrayList<ArrayList<Character>> edges = new ArrayList<ArrayList<Character>>();
 			edges.add(new ArrayList<Character>());
 			edges.add(new ArrayList<Character>());
@@ -67,8 +67,7 @@ public class Graph {
 							s += 'w';
 						}else if(img.getRGB(bar,foo) == -589824){ //red
 							s +='f'; 
-						}else if(img.getRGB(bar,foo) ==-1){
-							s+= 'm';
+						}else if(img.getRGB(bar,foo) ==-1){ // old, need to update map
 							s+='f';	
 						}else{
 							s+= 'b';
@@ -95,10 +94,8 @@ public class Graph {
 	}
 	private void generate(){
 		ArrayList<Direction> temp = nodes.get(graph[x][y]).getDirections();
-		for(Direction foo : temp){
-			System.out.println(foo);
-		}
-		if(x < 998  && x > 1 & y < 998 && y > 1 ){
+		System.out.println(rooms);
+		if(x < graph.length-2  && x > 1 & y < graph.length-2 && y > 1 ){
 			if(graph[x-1][y] == -1 && temp.contains(Direction.UP)){
 				moveUp();
 				setRoom();
@@ -173,7 +170,7 @@ public class Graph {
 				}
 				state = true;
 			}
-		graph[x][y] = temp.get(((int)(Math.random()*100)) % temp.size());
+		graph[x][y] = temp.get(((int)(Math.random()*100)) % temp.size()).byteValue();
 		generate();
 	}
 }
