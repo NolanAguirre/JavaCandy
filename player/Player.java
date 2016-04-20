@@ -8,7 +8,9 @@ import player.bag.Bag;
 
 public class Player extends Mob{
 	private Bag bag;
-	public Player(){
+	private int id;
+	public Player(int id){
+		this.id = id;
 		bag = new Bag();
 		new MobAnimation();
 		facing = Direction.DOWN;
@@ -20,7 +22,7 @@ public class Player extends Mob{
         imageChain = new int[]{0,1,2};
 	}
 	@Override
-	public synchronized void move(int x, int y) {
+	public void move(int x, int y) {
 		synchronized(this){
 			this.x += x;
 			this.y += y;
@@ -54,5 +56,8 @@ public class Player extends Mob{
 		if(item.getEffect() == StatusEffect.HP && item.getType() == ItemType.POTION){
 			hp += item.getEffectAmount();
 		}
+	}
+	public int getID(){
+		return id;
 	}
 }

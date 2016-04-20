@@ -46,15 +46,15 @@ public abstract class Mob implements Movable, Combat{
 	}
 	@Override
 	public int getX() {
-		synchronized(this){
+		//synchronized(this){
 			return x;
-		}
+		//}
 	}
 	@Override
 	public int getY() {
-		synchronized(this){
+		//synchronized(this){
 			return y;
-		}
+		//}
 	}
 	@Override
 	public void setMoving(boolean foo) {
@@ -74,7 +74,16 @@ public abstract class Mob implements Movable, Combat{
 		return hitBox.intersects(wall);
 	}
 	@Override
-	public void set(int x, int y) {
+	public synchronized void set(int x, int y) {
+		if(this.x < x){
+			setFacing(Direction.RIGHT);
+		}else if(this.x >x){
+			setFacing(Direction.LEFT);
+		}else if(this.y < y){
+			setFacing(Direction.DOWN);
+		}else{
+			setFacing(Direction.UP);
+		}
 		this.x = x;
 		this.y = y;
 	}
