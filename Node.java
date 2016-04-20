@@ -1,8 +1,7 @@
-package map;
+
 
 import java.util.ArrayList;
 
-import player.Direction;
 
 public class Node{
 	private ArrayList<Direction> directions;

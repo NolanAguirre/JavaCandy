@@ -1,4 +1,3 @@
-package map;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -8,7 +7,6 @@ import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
-import player.Direction;
 
 public class Graph {
 	private int x;
@@ -23,7 +21,7 @@ public class Graph {
 		nodes = new ArrayList<Node>();
 		graph = new byte[100][100];
 		for (byte[] row: graph){
-		    Arrays.fill(row, (byte)-1);
+		    Arrays.fill(row, (byte)50);
 		}
 		x = graph.length/2-1;
 		y = graph.length/2-1;
@@ -34,6 +32,9 @@ public class Graph {
 	public String getCurrent(){
 		System.out.println(x + " " + y + " rooms:  " + rooms);
 		return seeds.get(nodes.get(graph[x][y]).getSeed());
+	}
+	public String get(int[] cords){
+		return seeds.get(nodes.get(graph[cords[0]][cords[1]]).getSeed());
 	}
 	public void moveUp(){
 		x--;
@@ -48,9 +49,9 @@ public class Graph {
 		y++;
 	}
 	private void generateNodeTypes(){
-		int x = 0;
+		int temp = 0;
 		String s = "";
-		while(x < 37){ // one less than amount of maps
+		while(temp < 37){ // one less than amount of maps
 			ArrayList<ArrayList<Character>> edges = new ArrayList<ArrayList<Character>>();
 			edges.add(new ArrayList<Character>());
 			edges.add(new ArrayList<Character>());
@@ -58,7 +59,7 @@ public class Graph {
 			edges.add(new ArrayList<Character>());
 			s = "";
 			try{
-				BufferedImage img = ImageIO.read(new File("map.png")).getSubimage(x*20,0,20,20);
+				BufferedImage img = ImageIO.read(new File("map.png")).getSubimage(temp*20,0,20,20);
 				for(int foo = 0; foo < 20; foo++){
 					for(int bar = 0; bar < 20; bar++){
 						if(img.getRGB(bar,foo) ==-16777216){ //black
@@ -87,8 +88,8 @@ public class Graph {
 				throw(new Error("Spritesheet Not Found"));
 			}
 			seeds.add(s);
-			nodes.add(new Node(x,edges.get(0).contains('f'),edges.get(1).contains('f'),edges.get(2).contains('f'),edges.get(3).contains('f')));
-			x++;
+			nodes.add(new Node(temp,edges.get(0).contains('f'),edges.get(1).contains('f'),edges.get(2).contains('f'),edges.get(3).contains('f')));
+			temp++;
 		}
 		
 	}
@@ -96,22 +97,22 @@ public class Graph {
 		ArrayList<Direction> temp = nodes.get(graph[x][y]).getDirections();
 		System.out.println(rooms);
 		if(x < graph.length-2  && x > 1 & y < graph.length-2 && y > 1 ){
-			if(graph[x-1][y] == -1 && temp.contains(Direction.UP)){
+			if(graph[x-1][y] == 50 && temp.contains(Direction.UP)){
 				moveUp();
 				setRoom();
 				moveDown();
 			}
-			if(graph[x+1][y] == -1 && temp.contains(Direction.DOWN)){
+			if(graph[x+1][y] == 50 && temp.contains(Direction.DOWN)){
 				moveDown();
 				setRoom();
 				moveUp();
 			}
-			if(graph[x][y-1] == -1 && temp.contains(Direction.LEFT)){
+			if(graph[x][y-1] == 50 && temp.contains(Direction.LEFT)){
 				moveLeft();
 				setRoom();
 				moveRight();
 			}
-			if(graph[x][y+1] == -1 && temp.contains(Direction.RIGHT)){
+			if(graph[x][y+1] == 50 && temp.contains(Direction.RIGHT)){
 				moveRight();
 				setRoom();
 				moveLeft();
@@ -120,32 +121,32 @@ public class Graph {
 	}
 	private ArrayList<Direction> getConnections(){
 		ArrayList<Direction> returnVal = new ArrayList<Direction>();
-		if(graph[x-1][y] != -1 && nodes.get(graph[x-1][y]).getDirections().contains(Direction.DOWN)){ // if the up opens down
+		if(graph[x-1][y] != 50 && nodes.get(graph[x-1][y]).getDirections().contains(Direction.DOWN)){ // if the up opens down
 			returnVal.add(Direction.UP);
 		}
-		if(graph[x+1][y] != -1 && nodes.get(graph[x+1][y]).getDirections().contains(Direction.UP)){ // if the down opens up
+		if(graph[x+1][y] != 50 && nodes.get(graph[x+1][y]).getDirections().contains(Direction.UP)){ // if the down opens up
 			returnVal.add(Direction.DOWN);
 		}
-		if(graph[x][y-1] != -1 && nodes.get(graph[x][y-1]).getDirections().contains(Direction.RIGHT)){ // if the left opens right
+		if(graph[x][y-1] != 50 && nodes.get(graph[x][y-1]).getDirections().contains(Direction.RIGHT)){ // if the left opens right
 			returnVal.add(Direction.LEFT);
 		}
-		if(graph[x][y+1] != -1 && nodes.get(graph[x][y+1]).getDirections().contains(Direction.LEFT)){ // if the right opens left
+		if(graph[x][y+1] != 50 && nodes.get(graph[x][y+1]).getDirections().contains(Direction.LEFT)){ // if the right opens left
 			returnVal.add(Direction.RIGHT);
 		}
 		return returnVal;
 	}
 	private ArrayList<Direction> getBlockedConnections(){
 		ArrayList<Direction> returnVal = new ArrayList<Direction>();
-		if(graph[x-1][y] != -1 && !nodes.get(graph[x-1][y]).getDirections().contains(Direction.DOWN)){ // if the up opens down
+		if(graph[x-1][y] != 50 && !nodes.get(graph[x-1][y]).getDirections().contains(Direction.DOWN)){ // if the up opens down
 			returnVal.add(Direction.UP);
 		}
-		if(graph[x+1][y] != -1 && !nodes.get(graph[x+1][y]).getDirections().contains(Direction.UP)){ // if the down opens up
+		if(graph[x+1][y] != 50 && !nodes.get(graph[x+1][y]).getDirections().contains(Direction.UP)){ // if the down opens up
 			returnVal.add(Direction.DOWN);
 		}
-		if(graph[x][y-1] != -1 && !nodes.get(graph[x][y-1]).getDirections().contains(Direction.RIGHT)){ // if the left opens right
+		if(graph[x][y-1] != 50 && !nodes.get(graph[x][y-1]).getDirections().contains(Direction.RIGHT)){ // if the left opens right
 			returnVal.add(Direction.LEFT);
 		}
-		if(graph[x][y+1] != -1 && !nodes.get(graph[x][y+1]).getDirections().contains(Direction.LEFT)){ // if the right opens left
+		if(graph[x][y+1] != 50 && !nodes.get(graph[x][y+1]).getDirections().contains(Direction.LEFT)){ // if the right opens left
 			returnVal.add(Direction.RIGHT);
 		}
 		return returnVal;
@@ -172,5 +173,15 @@ public class Graph {
 			}
 		graph[x][y] = temp.get(((int)(Math.random()*100)) % temp.size()).byteValue();
 		generate();
+	}
+	@Override
+	public String toString(){
+		String returnVal = "";
+		for(byte[] foo : graph){
+			for(byte bar : foo){
+			 returnVal += bar + "-";
+			}
+		}
+		return returnVal;
 	}
 }
