@@ -19,8 +19,9 @@ public class GameServerThread extends Thread {
 		data = new String[]{""};
 		this.socket = socket;
 		this.server = server;
-		player = new ServerPlayer(300,300,49,49,2,100,ID);
 		ID = socket.getPort();
+		System.out.println("Socket : " + ID);
+		player = new ServerPlayer(300,300,49,49,2,100);
 	}
 	public synchronized ServerPlayer getPlayer(){
 		return player;

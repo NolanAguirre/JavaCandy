@@ -1,6 +1,5 @@
 import java.net.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -12,7 +11,6 @@ import java.io.*;
 
 public class GameServer implements Runnable {
 	private ArrayList<GameServerThread> clients;
-	private boolean running;
 	private int players;
 	private Graph graph;
 	private JTextArea textPane;
@@ -22,7 +20,6 @@ public class GameServer implements Runnable {
 		launch();
 		System.out.println("Binding to port " + port + ", please wait  ...");
 		Thread thread = new Thread(this);
-		running = true;
 		thread.start();
 	}
 	private void launch(){
@@ -44,22 +41,15 @@ public class GameServer implements Runnable {
 		frame.add(panel);
 	}
 	public void run() {
-		while (running) {
-			try {
-				Thread.sleep(5);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 	public synchronized void readInput(){
 		int remove = -1;
 			for(GameServerThread foo : clients){
 				String[] data = foo.getData();
 				if(data!= null){
-					System.out.println(Arrays.toString(data));
 					switch(data[0]){
 					case "#":
+						 removePlayer(foo);
 						if(data[2].equals("RIGHT")){
 							System.out.println("right");
 							foo.getPlayer().moveRight();
@@ -71,13 +61,11 @@ public class GameServer implements Runnable {
 							System.out.println("left");
 						}else{
 							System.out.println("up");
-								foo.getPlayer().moveUp();
+							foo.getPlayer().moveUp();
 						}
 						foo.send(graph.get(foo.getPlayer().getRoom()));
 						break;
 					case "$": move(foo,Integer.parseInt(data[2]), Integer.parseInt(data[3]));//simple motion $-playerID-x-y-
-						break;
-					case "!": attack(foo);//attack !-playerID-amount
 						break;
 					case "QUIT": remove = Integer.parseInt(foo.getData()[1]);
 						break;
@@ -92,16 +80,24 @@ public class GameServer implements Runnable {
 		foo.getPlayer().set(x,y);
 		for(GameServerThread bar: clients){
 			if(!foo.equals(bar) && foo.getPlayer().sameRoom(bar.getPlayer().getRoom())){
-				System.out.println("true");
-				bar.send("*-" + foo.getId() + "-" + x + "-" + y + "-");//* means other player
-				foo.send("*-" + bar.getId() + "-" + bar.getPlayer().getX()+ "-" + bar.getPlayer().getY() + "-");
+				bar.send("*-" + foo.getID() + "-" + x + "-" + y + "-");//* means other player
+				foo.send("*-" + bar.getID() + "-" + bar.getPlayer().getX()+ "-" + bar.getPlayer().getY() + "-");
 			}
 		}
 	}
-	private void attack(GameServerThread foo){
-		foo.getPlayer().damage(Integer.parseInt(clients.get(findClient(Integer.parseInt(foo.getData()[1]))).getData()[2]));
+	private void removePlayer(GameServerThread foo){
+		for(GameServerThread bar: clients){
+			if(!foo.equals(bar) && foo.getPlayer().sameRoom(bar.getPlayer().getRoom())){
+				bar.send("!-" + foo.getID());
+				foo.send("!-" + bar.getID());
+			}
+		}
 	}
+	//private void attack(GameServerThread foo){
+	//	foo.getPlayer().damage(Integer.parseInt(clients.get(findClient(Integer.parseInt(foo.getData()[1]))).getData()[2]));
+	//}
 	private int findClient(int Id) { // gets client
+		System.out.println("searching for peeps " + Id);
 		for(GameServerThread foo: clients){
 			if(foo.getID() == Id){
 				return clients.indexOf(foo);
@@ -118,13 +114,12 @@ public class GameServer implements Runnable {
 		}
 	}
 	public void addThread(Socket socket) {
-		if (players < 10) {
+		if (players < 50) {
 			System.out.println("Client accepted: " + socket); // happens when client is added
 			clients.add(new GameServerThread(this, socket));
 			try {
 				clients.get(players).open();
 				clients.get(players).start();
-				clients.get(players).send(graph.toString());
 				clients.get(players).send(graph.getCurrent());
 				clients.get(players).send("$" +"-"+ 20 + "-" + 350+ "-" + 350 + "-");
 				textPane.append("" + clients.get(players).getID() +"\n");
@@ -133,10 +128,9 @@ public class GameServer implements Runnable {
 				System.out.println("Error opening thread: " + ioe);
 			}
 		} else
-			System.out.println("Client refused: maximum " + 10 + " reached.");
+			System.out.println("Client refused: maximum " + 50 + " reached.");
 	}
 	public void close(){
-		running = false;
 		System.exit(1);
 	}	
 }

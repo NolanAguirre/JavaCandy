@@ -7,15 +7,13 @@ public class ServerPlayer {
 	private int roomY;
 	private int attack;
 	private int health;
-	private int Id;
-	public ServerPlayer(int x, int y, int roomX, int roomY, int attack, int health, int Id){
+	public ServerPlayer(int x, int y, int roomX, int roomY, int attack, int health){
 		this.x = x;
 		this.y = y;
 		this.roomX = roomX;
 		this.roomY = roomY;
 		this.attack = attack;
 		this.health = health;
-		this.Id = Id;
 	}
 	public void move(int x, int y){
 		this.x += x;
