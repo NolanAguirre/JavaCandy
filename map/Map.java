@@ -1,24 +1,16 @@
 package map;
 
-import java.awt.Image;
-import java.io.IOException;
 import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
 
 import mob.Enemy;
 import mob.Mob;
-import sprite.Sprite;
-import sprite.SpriteTile;
 
 public class Map {
 	private String seed;
-	private ArrayList<SpriteTile>map;
+	private byte[][]map;
 	private ArrayList<Mob> mobs;
-	private int x;
-	private int y;
 	public Map(String seed){
-		map = new ArrayList<SpriteTile>();
+		map = new byte[20][20];
 		mobs = new ArrayList<Mob>();
 		this.seed = seed;
 		generate();
@@ -28,25 +20,25 @@ public class Map {
 		return seed;
 	}
 	private void generate(){
-		x = 0;
-		y = 0;
+		int x = 0;
+		int y = 0;
 		for(char foo : seed.toCharArray()){
 			switch(foo){
 			case 'w': 
-				map.add(new Tile(TileType.WALL));
+				map[x][y] = 0;
 				break;
 			case 'm': 
 				mobs.add(new Enemy(x,y));
-				map.add(new Tile(TileType.WALL));
+				map[x][y] = 0;
 				break;
 			case 'b': 
-				map.add(new Tile(TileType.BRICK));
+				map[x][y] = 2;
 				break;
 			case 'f':
-				map.add(new Tile(TileType.WOOD_FLOOR));
+				map[x][y] = 1;
 				break; 				
 			default: 
-				map.add(new Tile(TileType.FILLER));
+				map[x][y] = 3;
 			}
 			x++;
 			if(x >= 20){
@@ -63,42 +55,10 @@ public class Map {
 			mobs.add(player);
 		}
 	}
-	public ArrayList<SpriteTile> getMapLayout() {
+	public byte[][] getMapLayout() {
 		return map;
 	}
-	//////////////////////// blocks/tiles
-	class Tile implements SpriteTile{
-		private Image DEFAULT;
-		private TileType type;
-		public Tile(TileType type){
-			this.type = type;
-			switch(type){
-			case WOOD_FLOOR:
-				loadImage(13);
-				break;
-			case WALL:
-				loadImage(14);
-				break;
-			case BRICK: 
-				loadImage(15);
-				break;
-			default:
-				loadImage(0);
-			}
-		}
-		private void loadImage(int cords){
-			try{
-				DEFAULT = ImageIO.read(Sprite.SPRITESHEET).getSubimage(cords*32,0,32,32);
-			}catch(IOException ex){
-				throw(new Error("File Not Found"));
-			}
-		}
-		@Override
-		public Image getImg() {
-			return DEFAULT;
-		}
-		public TileType getType(){
-			return type;
-		}
-	}		
+	public void removePlayer(Mob remove){
+		mobs.remove(mobs.indexOf(remove));
+	}
 }

@@ -1,7 +1,6 @@
 package animaition;
 
 import java.net.*;
-import java.util.Arrays;
 import java.io.*;
 
 public class GameClientThread extends Thread {
@@ -44,7 +43,6 @@ public class GameClientThread extends Thread {
 				data = streamIn.readUTF().split("-");
 				if(!oldData.equals(data)){
 					client.readInput();
-					System.out.println(Arrays.toString(data));
 				}
 			} catch (IOException ioe) {
 				System.out.println("Listening error: " + ioe.getMessage());

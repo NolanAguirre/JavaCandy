@@ -2,6 +2,7 @@ package animaition;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -13,15 +14,15 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import map.Map;
-import map.TileType;
 import mob.Enemy;
 import mob.Mob;
 import player.Direction;
 import player.Player;
-import sprite.SpriteTile;
+import sprite.Sprite;
 public class GameClient extends JPanel implements Runnable{
 	private ArrayList<Player> players;
 	private Player player;
@@ -31,7 +32,10 @@ public class GameClient extends JPanel implements Runnable{
 	private static final long serialVersionUID = 1L;
 	private GameState gameState;
 	private boolean worldIsCreated;
-	
+	public Image WOOD;
+	public Image WALL;
+	public Image BRICK;
+	public Image DEFAULT;
 	
 	//////////////////////////
 	private Socket socket = null; //server socket 
@@ -40,6 +44,11 @@ public class GameClient extends JPanel implements Runnable{
 	public GameClient(String serverName, int serverPort) {
 		System.out.println("Establishing connection. Please wait ...");
 		try {
+			WOOD = ImageIO.read(Sprite.SPRITESHEET).getSubimage(13*32,0,32,32);
+			WALL = ImageIO.read(Sprite.SPRITESHEET).getSubimage(14*32,0,32,32);
+			BRICK = ImageIO.read(Sprite.SPRITESHEET).getSubimage(15*32,0,32,32);
+			DEFAULT = ImageIO.read(Sprite.SPRITESHEET).getSubimage(0,0,32,32);
+			
 			players = new ArrayList<Player>();
 			gameState = GameState.MAP;
 			frames = 0;
@@ -66,6 +75,8 @@ public class GameClient extends JPanel implements Runnable{
 			switch(data[0]){
 				case "*": addPlayer(Integer.parseInt(data[1]),Integer.parseInt(data[2]), Integer.parseInt(data[3]));
 					break;
+				case "!": removePlayer(Integer.parseInt(data[1]));
+					break;
 			}
 		}else{
 			if(data[0].length() > 200){
@@ -74,12 +85,24 @@ public class GameClient extends JPanel implements Runnable{
 			}
 		}
 	}
+	private void removePlayer(int id){
+		Player temp = new Player(id);
+		for(Player foo: players){
+			if(foo.getID() == id){
+				temp= foo;
+				break;
+			}
+		}
+		map.removePlayer(players.remove(players.indexOf(temp)));
+		
+	}
 	private void addPlayer(int id, int x, int y){
 		boolean flag = true;
 		for(Player foo: players){
 			if(foo.getID() == id){
 				flag = false;
 				foo.set(x, y);
+				break;
 			}
 		}
 		if(flag){
@@ -104,21 +127,25 @@ public class GameClient extends JPanel implements Runnable{
 		for(Player foo: players){
 			map.addMob(foo);
 		}
-		int x = 0;
-		int y= 0;
 		g.setColor(Color.WHITE);
-		
-		for(SpriteTile foo : map.getMapLayout()){ // map stuff
-				g.drawImage(foo.getImg(),x*32, y*32, null);
-				if(foo.getType() == TileType.WALL){
+		for(int x = 0; x < 20; x++){
+			for(int y = 0; y < 20; y++){
+				switch(map.getMapLayout()[x][y]){
+				case 0: 
+					g.drawImage(WALL,x*32, y*32, null);
 					walls.add(new Rectangle(x*32,y*32,32,32));
-				}
-				x++;
-				if(x == 20){
-					y++;
-					x = 0;
+					break;
+				case 1: 
+					g.drawImage(WOOD,x*32, y*32, null);
+					break;
+				case 2:
+					g.drawImage(BRICK,x*32, y*32, null);
+					break; 				
+				default: 
+					g.drawImage(DEFAULT,x*32, y*32, null);
 				}
 			}
+		}	
 		
 		for(Mob mob: map.getMobs()){
 			g.drawImage(mob.getImg(),mob.getX(), mob.getY(), null);
@@ -149,23 +176,27 @@ public class GameClient extends JPanel implements Runnable{
 			System.out.println("Game over");
 			System.exit(0);
 		}
-		if(player.getX() > 630){
-			streamOut.writeUTF("#-" + socket.getLocalPort() + "-"+ "RIGHT");
-			player.set(20,player.getY());
-			players = new ArrayList<Player>();
-		}else if(player.getX() < 0){
-			streamOut.writeUTF("#-" + socket.getLocalPort() + "-"+"LEFT");
-			player.set(630,player.getY());
-			players = new ArrayList<Player>();
-		}else if(player.getY() > 630){
-			streamOut.writeUTF("#-" + socket.getLocalPort() + "-"+ "DOWN");
-			player.set(player.getX(),10);
-			players = new ArrayList<Player>();
-		}else if(player.getY() < 0){
-			streamOut.writeUTF("#-" + socket.getLocalPort() + "-"+ "UP");
-			player.set(player.getX(),630);
-			players = new ArrayList<Player>();
-		}
+			if(player.getX() > 630){
+				streamOut.writeUTF("#-" + socket.getLocalPort() + "-"+ "RIGHT");
+				write();
+				player.set(10,player.getY());
+				player.freeze();
+			}else if(player.getX() < 0){
+				streamOut.writeUTF("#-" + socket.getLocalPort() + "-"+"LEFT");
+				write();
+				player.set(630,player.getY());
+				player.freeze();
+			}else if(player.getY() > 630){
+				streamOut.writeUTF("#-" + socket.getLocalPort() + "-"+ "DOWN");
+				write();
+				player.set(player.getX(),10);
+				player.freeze();
+			}else if(player.getY() < 0){
+				streamOut.writeUTF("#-" + socket.getLocalPort() + "-"+ "UP");
+				write();
+				player.set(player.getX(),630);
+				player.freeze();
+			}
 		g.drawString(player.getX()+" " +  player.getY(), 200, 200);
 	}
 	private void renderChest(Graphics g){ ////////// to do
@@ -180,7 +211,6 @@ public class GameClient extends JPanel implements Runnable{
 			try {
 				renderMap(g);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			break;
@@ -207,7 +237,7 @@ public class GameClient extends JPanel implements Runnable{
 	}
 	public void write(){
 		try {
-			streamOut.writeUTF("$-" + socket.getLocalPort() + "-"+player.getX() +"-"+player.getY());
+			streamOut.writeUTF("$-" + player.getID() + "-"+player.getX() +"-"+player.getY());
 			streamOut.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -216,15 +246,16 @@ public class GameClient extends JPanel implements Runnable{
 	}
 	@Override
 	public void run(){
+		write();
 		while(true){
 			try {
 				Thread.sleep(16);
+				frames++;
+				repaint();
+				
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			frames++;
-			repaint();
 		}
 	}
 	//////////////////////////
@@ -232,20 +263,14 @@ public class GameClient extends JPanel implements Runnable{
 
 		@Override
 		public void mouseClicked(MouseEvent arg0) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void mouseEntered(MouseEvent arg0) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
 		public void mouseExited(MouseEvent arg0) {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
@@ -269,10 +294,9 @@ public class GameClient extends JPanel implements Runnable{
         }
         @Override
         public void keyPressed(KeyEvent e) {
-        	write();
             if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
             	if(!player.getFrozenRight()){
-            		player.move(7,0);
+            		player.move(5,0);
             		player.setMoving(true);
             	}
             	if(player.getFacing() != Direction.RIGHT){
@@ -280,7 +304,7 @@ public class GameClient extends JPanel implements Runnable{
             	}
             }else if (e.getKeyCode() == KeyEvent.VK_LEFT  || e.getKeyCode() == KeyEvent.VK_A) {
             	if(!player.getFrozenLeft()){
-            		player.move(-7,0);
+            		player.move(-5,0);
             		player.setMoving(true);
             	}
             	if(player.getFacing() != Direction.LEFT){
@@ -288,7 +312,7 @@ public class GameClient extends JPanel implements Runnable{
             	}
             }else if (e.getKeyCode() == KeyEvent.VK_UP ||  e.getKeyCode() == KeyEvent.VK_W) {
             	if(!player.getFrozenUp()){
-            		player.move(0,-7);
+            		player.move(0,-5);
             		player.setMoving(true);
             	}
             	if(player.getFacing() != Direction.UP){
@@ -296,7 +320,7 @@ public class GameClient extends JPanel implements Runnable{
             	}
             }else if (e.getKeyCode() == KeyEvent.VK_DOWN ||  e.getKeyCode() == KeyEvent.VK_S) {
             	if(!player.getFrozenDown()){
-            		player.move(0,7);
+            		player.move(0,5);
             		player.setMoving(true);
             	}
             	if(player.getFacing() != Direction.DOWN){
@@ -305,6 +329,7 @@ public class GameClient extends JPanel implements Runnable{
              }else if(e.getKeyCode() == KeyEvent.VK_E){
             	 setGameState();
             }
+            write();
         }
         @Override
         public void keyReleased(KeyEvent e) {
