@@ -18,7 +18,6 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import map.Map;
-import mob.Enemy;
 import mob.Mob;
 import player.Direction;
 import player.Player;
@@ -28,7 +27,6 @@ public class GameClient extends JPanel implements Runnable{
 	private Player player;
 	public Map map;
 	private ArrayList<Rectangle> walls;
-	private int frames;
 	private static final long serialVersionUID = 1L;
 	private GameState gameState;
 	private boolean worldIsCreated;
@@ -48,10 +46,8 @@ public class GameClient extends JPanel implements Runnable{
 			WALL = ImageIO.read(Sprite.SPRITESHEET).getSubimage(14*32,0,32,32);
 			BRICK = ImageIO.read(Sprite.SPRITESHEET).getSubimage(15*32,0,32,32);
 			DEFAULT = ImageIO.read(Sprite.SPRITESHEET).getSubimage(0,0,32,32);
-			
 			players = new ArrayList<Player>();
 			gameState = GameState.MAP;
-			frames = 0;
 			addKeyListener(new CustomKeyListener());
 		    addMouseListener(new CustomMouseListener());
 			setFocusable(true);
@@ -73,9 +69,11 @@ public class GameClient extends JPanel implements Runnable{
 		String[] data = client.getData();
 		if(data.length > 1){
 			switch(data[0]){
-				case "*": addPlayer(Integer.parseInt(data[1]),Integer.parseInt(data[2]), Integer.parseInt(data[3]));
+				case "*": addPlayer(Integer.parseInt(data[1]),Integer.parseInt(data[2]), Integer.parseInt(data[3]), Integer.parseInt(data[4]));
 					break;
 				case "!": removePlayer(Integer.parseInt(data[1]));
+					break;
+				case "@": player.setHP(Integer.parseInt(data[1])); // attacked
 					break;
 			}
 		}else{
@@ -89,19 +87,20 @@ public class GameClient extends JPanel implements Runnable{
 		Player temp = new Player(id);
 		for(Player foo: players){
 			if(foo.getID() == id){
-				temp= foo;
+				temp = foo;
 				break;
 			}
 		}
 		map.removePlayer(players.remove(players.indexOf(temp)));
 		
 	}
-	private void addPlayer(int id, int x, int y){
+	private void addPlayer(int id, int x, int y, int hp){
 		boolean flag = true;
 		for(Player foo: players){
 			if(foo.getID() == id){
 				flag = false;
 				foo.set(x, y);
+				foo.setHP(hp);
 				break;
 			}
 		}
@@ -150,15 +149,11 @@ public class GameClient extends JPanel implements Runnable{
 		for(Mob mob: map.getMobs()){
 			g.drawImage(mob.getImg(),mob.getX(), mob.getY(), null);
 			g.drawString("HP: " + mob.getHp(),mob.getX() - 6, mob.getY() - 3);
-			if(mob instanceof Enemy && mob.isTouching(new Rectangle(player.getX(), player.getY(), 32, 32))){
-				if(player.isAttacking()){
-					player.attack(mob);
-				}
-				if(frames > 60){
-					mob.attack(player);
-					frames = 0;
-				}
-				if(mob.isDead()){
+			if(!mob.equals(player) && player.isAttacking() && player.isTouching(new Rectangle(mob.getX(), mob.getY(), 32, 32))){
+				player.stopAttack();
+				streamOut.writeUTF("@-" + mob.getID());
+				streamOut.flush();
+				if(mob.getHp() <= 0){
 					map.getMobs().remove(mob);
 					break;
 				}
@@ -172,31 +167,33 @@ public class GameClient extends JPanel implements Runnable{
 				}
 			}
 		}
-		if(player.isDead()){
+		if(player.getHp() <= 0 ){
 			System.out.println("Game over");
+			streamOut.writeUTF("QUIT");
 			System.exit(0);
 		}
 			if(player.getX() > 630){
-				streamOut.writeUTF("#-" + socket.getLocalPort() + "-"+ "RIGHT");
+				streamOut.writeUTF("#-RIGHT");
 				write();
 				player.set(10,player.getY());
 				player.freeze();
 			}else if(player.getX() < 0){
-				streamOut.writeUTF("#-" + socket.getLocalPort() + "-"+"LEFT");
+				streamOut.writeUTF("#-LEFT");
 				write();
 				player.set(630,player.getY());
 				player.freeze();
 			}else if(player.getY() > 630){
-				streamOut.writeUTF("#-" + socket.getLocalPort() + "-"+ "DOWN");
+				streamOut.writeUTF("#-DOWN");
 				write();
 				player.set(player.getX(),10);
 				player.freeze();
 			}else if(player.getY() < 0){
-				streamOut.writeUTF("#-" + socket.getLocalPort() + "-"+ "UP");
+				streamOut.writeUTF("#-UP");
 				write();
 				player.set(player.getX(),630);
 				player.freeze();
 			}
+		g.drawString("Connected: " + socket.getLocalPort(), 300, 300);
 		g.drawString(player.getX()+" " +  player.getY(), 200, 200);
 	}
 	private void renderChest(Graphics g){ ////////// to do
@@ -237,10 +234,9 @@ public class GameClient extends JPanel implements Runnable{
 	}
 	public void write(){
 		try {
-			streamOut.writeUTF("$-" + player.getID() + "-"+player.getX() +"-"+player.getY());
+			streamOut.writeUTF("$-"+player.getX() +"-"+player.getY());
 			streamOut.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
 	}
@@ -250,9 +246,7 @@ public class GameClient extends JPanel implements Runnable{
 		while(true){
 			try {
 				Thread.sleep(16);
-				frames++;
 				repaint();
-				
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

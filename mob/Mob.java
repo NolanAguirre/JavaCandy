@@ -144,9 +144,7 @@ public abstract class Mob implements Movable, Combat{
 		return dead;
 	}
 	public void attack(Mob mob){
-		//damage(mob.getAttack());
 		mob.damage(attack);
-		isAttacking = false;
 	}
 	@Override
 	public int getHp(){
@@ -198,5 +196,12 @@ public abstract class Mob implements Movable, Combat{
 			    }
 			}
 	}
+	public void setHP(int hp){
+		this.hp = hp;
+	}
+	public int getID() {
+		return -1;
+	}
+	
 
 }

@@ -57,6 +57,7 @@ public class Player extends Mob{
 			hp += item.getEffectAmount();
 		}
 	}
+	@Override
 	public int getID(){
 		return id;
 	}

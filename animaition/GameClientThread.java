@@ -1,6 +1,8 @@
 package animaition;
 
 import java.net.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.io.*;
 
 public class GameClientThread extends Thread {
@@ -40,8 +42,11 @@ public class GameClientThread extends Thread {
 		while (running) {
 			try {
 				String[] oldData = data;
-				data = streamIn.readUTF().split("-");
+				ArrayList<String> list = new ArrayList<String>(Arrays.asList(streamIn.readUTF().split("-")));
+				list.removeAll(Arrays.asList(""));
+				data = list.toArray(new String[list.size()]);
 				if(!oldData.equals(data)){
+					System.out.println(Arrays.toString(data));
 					client.readInput();
 				}
 			} catch (IOException ioe) {
