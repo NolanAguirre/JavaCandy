@@ -50,13 +50,13 @@ public class GameServer implements Runnable {
 					switch(data[0]){
 					case "#":
 						 removePlayer(foo);
-						if(data[2].equals("RIGHT")){
+						if(data[1].equals("RIGHT")){
 							System.out.println("right");
 							foo.getPlayer().moveRight();
-						}else if(data[2].equals("DOWN")){
+						}else if(data[1].equals("DOWN")){
 							System.out.println("down");
 							foo.getPlayer().moveDown();
-						}else if(data[2].equals("LEFT")){
+						}else if(data[1].equals("LEFT")){
 							foo.getPlayer().moveLeft();
 							System.out.println("left");
 						}else{
@@ -65,9 +65,11 @@ public class GameServer implements Runnable {
 						}
 						foo.send(graph.get(foo.getPlayer().getRoom()));
 						break;
-					case "$": move(foo,Integer.parseInt(data[2]), Integer.parseInt(data[3]));//simple motion $-playerID-x-y-
+					case "$": move(foo,Integer.parseInt(data[1]), Integer.parseInt(data[2]));//simple motion $-x-y-
 						break;
-					case "QUIT": remove = Integer.parseInt(foo.getData()[1]);
+					case "@": attack(foo.getPlayer().getAttack(), Integer.parseInt(data[1]));
+						break;
+					case "QUIT": remove = foo.getID();
 						break;
 				}
 			}
@@ -80,8 +82,8 @@ public class GameServer implements Runnable {
 		foo.getPlayer().set(x,y);
 		for(GameServerThread bar: clients){
 			if(!foo.equals(bar) && foo.getPlayer().sameRoom(bar.getPlayer().getRoom())){
-				bar.send("*-" + foo.getID() + "-" + x + "-" + y + "-");//* means other player
-				foo.send("*-" + bar.getID() + "-" + bar.getPlayer().getX()+ "-" + bar.getPlayer().getY() + "-");
+				bar.send("*-" + foo.getID() + "-" + x + "-" + y + "-" + foo.getPlayer().getHealth());//* means other player
+				foo.send("*-" + bar.getID() + "-" + bar.getPlayer().getX()+ "-" + bar.getPlayer().getY() +  "-" + bar.getPlayer().getHealth());
 			}
 		}
 	}
@@ -93,12 +95,16 @@ public class GameServer implements Runnable {
 			}
 		}
 	}
-	//private void attack(GameServerThread foo){
-	//	foo.getPlayer().damage(Integer.parseInt(clients.get(findClient(Integer.parseInt(foo.getData()[1]))).getData()[2]));
-	//}
+	private void attack(int attack, int otherID){
+		GameServerThread temp = clients.get(findClient(otherID));
+		temp.getPlayer().damage(2);
+		temp.send("@-" + temp.getPlayer().getHealth() + "-");
+		move(temp, temp.getPlayer().getX(),temp.getPlayer().getY());
+	}
 	private int findClient(int Id) { // gets client
 		System.out.println("searching for peeps " + Id);
 		for(GameServerThread foo: clients){
+			System.out.println("peep is " + foo.getID());
 			if(foo.getID() == Id){
 				return clients.indexOf(foo);
 			}
@@ -107,8 +113,10 @@ public class GameServer implements Runnable {
 	}
 	public synchronized void remove(int ID) {
 		try {
+			removePlayer(clients.get(findClient(ID)));
 			clients.get(findClient(ID)).kill();
 			clients.remove(findClient(ID));
+			players--;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
