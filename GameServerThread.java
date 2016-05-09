@@ -10,7 +10,7 @@ public class GameServerThread extends Thread {
 	private GameServer server;
 	private ServerPlayer player;
 	private Socket socket;
-	private int ID;
+	private final int ID;
 	private String[] data;
 	private boolean running;
 	private boolean tracking;

@@ -13,10 +13,12 @@ public class Graph {
 	private int y;
 	private int rooms;
 	private byte[][] graph;
+	private Mobs[][][]mobs;
 	private ArrayList<String> seeds;
 	private ArrayList<Node> nodes;
 	public Graph(){
 		rooms = 0;
+		mobs = new Mobs[100][100][20];
 		seeds = new ArrayList<String>();
 		nodes = new ArrayList<Node>();
 		graph = new byte[100][100];
@@ -173,6 +175,39 @@ public class Graph {
 			}
 		graph[x][y] = temp.get(((int)(Math.random()*100)) % temp.size()).byteValue();
 		generate();
+	}
+	public void generateMobs(){
+		for(int x = 0; x < graph.length; x++){
+			for(int y = 0; y < graph[x].length; y++){
+				if(graph[x][y] != 50){
+					addMobs(get(new int[]{x,y}), x,y);
+				}
+			}
+		}
+	}
+	private void addMobs(String seed,int X, int Y){
+		String temp = "";
+		for(char foo : seed.toCharArray()){
+			temp += foo;
+			if(foo == 'f' && Math.random() > .9){
+				temp +='m';
+			}
+		}
+		int x = 0;
+		int y = 0;
+		int mob = 0;
+		for(char foo : temp.toCharArray()){
+			if(foo == 'm'){
+				mobs[X][Y][mob] = new Mobs(x,y);
+				x--;
+				mob++;
+			}
+			x++;
+			if(x == 20){
+				y++;
+				x = 0;
+			}
+		}
 	}
 	@Override
 	public String toString(){
