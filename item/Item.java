@@ -66,5 +66,15 @@ public class Item implements Items, Sprite{
 	public StatusEffect getEffect() {
 		return effect;
 	}
+	@Override
+	public int getX() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	@Override
+	public int getY() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 }

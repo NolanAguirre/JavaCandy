@@ -11,8 +11,9 @@ import javax.imageio.ImageIO;
 import player.Combat;
 import player.Direction;
 import sprite.Movable;
+import sprite.Sprite;
 
-public abstract class Mob implements Movable, Combat{
+public abstract class Mob implements Sprite, Movable, Combat{
 	protected Direction facing;
 	protected boolean isMoving;
 	protected boolean freezeUp;
@@ -29,7 +30,7 @@ public abstract class Mob implements Movable, Combat{
 	protected boolean isAttacking;
 	protected Image loadImage(int cord){
 		try{
-			return ImageIO.read(Movable.SPRITESHEET).getSubimage(cord*32,0,32,32);
+			return ImageIO.read(Sprite.SPRITESHEET).getSubimage(cord*32,0,32,32);
 		}catch(IOException ex){
 			throw(new Error("Spritesheet Not Found"));
 		}
@@ -41,7 +42,7 @@ public abstract class Mob implements Movable, Combat{
 		freezeRight = true;
 	}
 	@Override
-	public synchronized Image getImg() { // not really sure, better to have it and not need it
+	public Image getImg() { // not really sure, better to have it and not need it
 		return img;
 	}
 	@Override
@@ -81,9 +82,23 @@ public abstract class Mob implements Movable, Combat{
 			setFacing(Direction.LEFT);
 		}else if(this.y < y){
 			setFacing(Direction.DOWN);
-		}else{
+		}else if(this.y > y){
 			setFacing(Direction.UP);
 		}
+		switch(facing){
+			case LEFT:
+				imageChain = new int[]{3,4,5};
+				break;
+			case DOWN:
+				imageChain = new int[]{6,7,6,8};
+				break;
+			case UP:
+				imageChain = new int[]{9,10,9,11};
+				break;
+			case RIGHT:
+				imageChain = new int[]{0,1,2}; 
+				break;
+			}
 		this.x = x;
 		this.y = y;
 	}
@@ -108,7 +123,7 @@ public abstract class Mob implements Movable, Combat{
 	}
 	@Override
 	public synchronized void preventMotion(Rectangle wall) {
-		if(isTouching(new Rectangle((int)wall.getX()+2,(int)wall.getY()+46,28,1))){
+		if(isTouching(new Rectangle((int)wall.getX()+2,(int)wall.getY()+42,28,1))){
 			preventMotion(Direction.UP);
 		}
 		if(isTouching(new Rectangle((int)wall.getX()+2,(int)wall.getY()-15,28,1))){

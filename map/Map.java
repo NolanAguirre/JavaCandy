@@ -1,5 +1,6 @@
 package map;
 
+import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import mob.Enemy;
@@ -9,15 +10,13 @@ public class Map {
 	private String seed;
 	private byte[][]map;
 	private ArrayList<Mob> mobs;
+	private ArrayList<Rectangle> walls;
 	public Map(String seed){
 		map = new byte[20][20];
 		mobs = new ArrayList<Mob>();
+		walls = new ArrayList<Rectangle>();
 		this.seed = seed;
 		generate();
-	}
-	@Override
-	public String toString(){
-		return seed;
 	}
 	private void generate(){
 		int x = 0;
@@ -26,6 +25,7 @@ public class Map {
 			switch(foo){
 			case 'w': 
 				map[x][y] = 0;
+				walls.add(new Rectangle(x*32, y*32, 32, 32));
 				break;
 			case 'm': 
 				mobs.add(new Enemy(x,y));
@@ -60,5 +60,8 @@ public class Map {
 	}
 	public void removePlayer(Mob remove){
 		mobs.remove(mobs.indexOf(remove));
+	}
+	public ArrayList<Rectangle> getWalls(){
+		return walls;
 	}
 }
