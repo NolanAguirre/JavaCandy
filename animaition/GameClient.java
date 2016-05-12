@@ -14,6 +14,7 @@ public class GameClient implements Runnable {
 	private Player player;
 	private Map map;
 	private GameDisplay display;
+	private HUD hud;
 	private HitBox hitbox;
 	private Socket socket = null; // server socket
 	private DataOutputStream streamOut = null; // output steam
@@ -22,6 +23,7 @@ public class GameClient implements Runnable {
 	public GameClient(String serverName, int serverPort, Player player) {
 		System.out.println("Establishing connection. Please wait ...");
 		this.player = player;
+		hud = new HUD(player);
 		display = new GameDisplay();
 		hitbox = new HitBox(player, this);
 		try {
@@ -40,6 +42,9 @@ public class GameClient implements Runnable {
 	}
 	public GameDisplay getDisplay(){
 		return display;
+	}
+	public HUD getHUD(){
+		return hud;
 	}
 	public synchronized void readInput() {
 		String[] data = client.getData();
@@ -141,7 +146,7 @@ public class GameClient implements Runnable {
 			streamOut.writeUTF("$-" + player.getX() + "-" + player.getY());
 			streamOut.flush();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 

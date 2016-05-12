@@ -7,7 +7,9 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import player.Direction;
 import player.Player;
@@ -19,7 +21,11 @@ public class MyFrame extends JFrame implements WindowListener{
 	public MyFrame(){
 		player = new Player(8);
 		temp = new GameClient("",0, player);
-	    add(temp.getDisplay());
+		JPanel pane = new JPanel();
+		pane.setLayout(new BoxLayout(pane, BoxLayout.PAGE_AXIS));
+	    pane.add(temp.getDisplay());
+	    pane.add(temp.getHUD());
+	    add(pane);
 	    setResizable(false);
 	    setFocusable(true);
 		requestFocusInWindow();
