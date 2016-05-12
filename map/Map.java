@@ -58,8 +58,8 @@ public class Map {
 	public byte[][] getMapLayout() {
 		return map;
 	}
-	public void removePlayer(Mob remove){
-		mobs.remove(mobs.indexOf(remove));
+	public void removePlayer(int remove){
+		mobs.remove(remove);
 	}
 	public ArrayList<Rectangle> getWalls(){
 		return walls;

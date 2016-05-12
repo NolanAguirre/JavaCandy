@@ -4,28 +4,59 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.JFrame;
 
 import player.Direction;
 import player.Player;
 
-public class MyFrame extends JFrame {
+public class MyFrame extends JFrame implements WindowListener{
 	private Player player;
+	private GameClient temp;
 	private static final long serialVersionUID = 2L;
 	public MyFrame(){
 		player = new Player(8);
-		GameClient temp = new GameClient("",0, player);
-	     add(temp.getDisplay());
-	     setResizable(false);
-	     setFocusable(true);
+		temp = new GameClient("",0, player);
+	    add(temp.getDisplay());
+	    setResizable(false);
+	    setFocusable(true);
 		requestFocusInWindow();
-		 addKeyListener(new CustomKeyListener());
-		 addMouseListener(new CustomMouseListener());
-	     pack();
-	     setTitle("Candy Box 3");
-	     setLocationRelativeTo(null);
-	     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		addKeyListener(new CustomKeyListener());
+		addMouseListener(new CustomMouseListener());
+	    pack();
+	    setTitle("Candy Box 3");
+	    setLocationRelativeTo(null);
+	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	@Override
+	public void windowClosed(WindowEvent e){
+		
+	}
+	@Override
+	public void windowActivated(WindowEvent e) {
+		
+	}
+	@Override
+	public void windowClosing(WindowEvent e) {
+		temp.close();
+	}
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		
+	}
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		
+	}
+	@Override
+	public void windowIconified(WindowEvent e) {
+		
+	}
+	@Override
+	public void windowOpened(WindowEvent e) {
+		
 	}
 	class CustomMouseListener implements MouseListener{
 
@@ -104,7 +135,7 @@ public class MyFrame extends JFrame {
              }
            player.setMoving(false);
         }
-    }
+	}
 }
 
 

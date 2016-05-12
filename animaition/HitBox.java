@@ -4,8 +4,9 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import map.Map;
+import mob.Mob;
+import player.Direction;
 import player.Player;
-import sprite.Movable;
 
 public class HitBox implements Runnable {
 	private Player player;
@@ -20,12 +21,13 @@ public class HitBox implements Runnable {
 		thread.start();
 	}
 	private void renderHitBox() {
-		for (Movable mob : map.getMobs()) {
+		for (Mob mob : map.getMobs()) {
 			if (!mob.equals(player) && player.isAttacking() && player.isTouching(new Rectangle(mob.getX(), mob.getY(), 32, 32))) {
 				client.sendAttack(mob.getID());
+				player.stopAttack();
 			}
 		}
-		for (Movable mob : map.getMobs()) {
+		for (Mob mob : map.getMobs()) {
 			mob.unfreeze();
 			for (Rectangle wall : walls) {
 				if (mob.isTouching(wall)) {
@@ -34,19 +36,19 @@ public class HitBox implements Runnable {
 			}
 		}
 		if (player.getX() > 630) {
-			client.changeDirection();
+			client.changeDirection(Direction.RIGHT);
 			player.set(10, player.getY());
 			player.freeze();
 		} else if (player.getX() < 0) {
-			client.changeDirection();
+			client.changeDirection(Direction.LEFT);
 			player.set(630, player.getY());
 			player.freeze();
 		} else if (player.getY() > 630) {
-			client.changeDirection();
+			client.changeDirection(Direction.DOWN);
 			player.set(player.getX(), 10);
 			player.freeze();
 		} else if (player.getY() < 0) {
-			client.changeDirection();
+			client.changeDirection(Direction.UP);
 			player.set(player.getX(), 630);
 			player.freeze();
 		}
@@ -59,7 +61,7 @@ public class HitBox implements Runnable {
 	public void run() {
 		while (true) {
 			try {
-				Thread.sleep(10);
+				Thread.sleep(5);
 				if(map != null){
 					renderHitBox();
 				}

@@ -4,13 +4,13 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 
 import map.Map;
+import mob.Mob;
+import player.Direction;
 import player.Player;
 
 public class GameClient implements Runnable {
-	private ArrayList<Player> players;
 	private Player player;
 	private Map map;
 	private GameDisplay display;
@@ -25,8 +25,7 @@ public class GameClient implements Runnable {
 		display = new GameDisplay();
 		hitbox = new HitBox(player, this);
 		try {
-			players = new ArrayList<Player>();
-			socket = new Socket("0.0.0.0", 7958);
+			socket = new Socket("10.229.1.88", 7958);
 			this.player.setID(socket.getLocalPort());
 			System.out.println("Connected: " + socket);
 			streamOut = new DataOutputStream(socket.getOutputStream());
@@ -42,13 +41,12 @@ public class GameClient implements Runnable {
 	public GameDisplay getDisplay(){
 		return display;
 	}
-	public void readInput() {
+	public synchronized void readInput() {
 		String[] data = client.getData();
 		if (data.length > 1) {
 			switch (data[0]) {
 			case "*":
-				addPlayer(Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]),
-						Integer.parseInt(data[4]));
+				addPlayer(Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]),Integer.parseInt(data[4]));
 				break;
 			case "!":
 				removePlayer(Integer.parseInt(data[1]));
@@ -56,9 +54,12 @@ public class GameClient implements Runnable {
 			case "@":
 				player.setHP(Integer.parseInt(data[1])); // attacked
 				break;
+			case "QUIT":
+				System.exit(1);
+				break;
 			}
 		} else {
-			if (data[0].length() > 200) {
+			if (data[0].length() > 50) {
 				map = new Map(data[0]);
 				map.addMob(player);
 				hitbox.changeMap(map);
@@ -66,22 +67,30 @@ public class GameClient implements Runnable {
 			}
 		}
 	}
-
+	public void close(){
+		try {
+			streamOut.writeUTF("QUIT");
+			streamOut.close();
+			System.exit(0);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	private void removePlayer(int id) {
-		Player temp = new Player(id);
-		for (Player foo : players) {
+		Mob temp = new Player(id);
+		for (Mob foo :  map.getMobs()) {
 			if (foo.getID() == id) {
 				temp = foo;
 				break;
 			}
 		}
-		map.removePlayer(players.remove(players.indexOf(temp)));
+		map.removePlayer(map.getMobs().indexOf(temp));
 
 	}
-
+	
 	private void addPlayer(int id, int x, int y, int hp) {
 		boolean flag = true;
-		for (Player foo : players) {
+		for (Mob foo : map.getMobs()) {
 			if (foo.getID() == id) {
 				flag = false;
 				foo.set(x, y);
@@ -90,12 +99,11 @@ public class GameClient implements Runnable {
 			}
 		}
 		if (flag) {
-			players.add(new Player(id));
+			map.addMob(new Player(id));
 		}
 	}
 
 	public void sendAttack(int ID){
-		player.stopAttack();
 		try {
 			streamOut.writeUTF("@-" + ID);
 			streamOut.flush();
@@ -105,28 +113,26 @@ public class GameClient implements Runnable {
 				System.exit(0);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public void changeDirection() {
+	public void changeDirection(Direction dir) {
 		try {
-			if (player.getX() > 630) {
+			if (dir == Direction.RIGHT) {
 				streamOut.writeUTF("#-RIGHT");
 				write();
-			} else if (player.getX() < 0) {
+			} else if (dir == Direction.LEFT) {
 				streamOut.writeUTF("#-LEFT");
 				write();
-			} else if (player.getY() > 630) {
+			} else if (dir == Direction.DOWN) {
 				streamOut.writeUTF("#-DOWN");
 				write();
-			} else if (player.getY() < 0) {
+			} else if (dir == Direction.UP) {
 				streamOut.writeUTF("#-UP");
 			}
 			streamOut.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -141,17 +147,16 @@ public class GameClient implements Runnable {
 
 	@Override
 	public void run() {
-		int frames = 0;
-		write();
 		while (true) {
 			try {
-				frames++;
-				if (frames % 40 == 0) {
-					write();
+				if (player.getHp() <= 0) {
+					close();
 				}
+				write();
+				readInput();
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				System.out.println("Out Stream closed");
 			}
 		}
 	}
