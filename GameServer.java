@@ -107,6 +107,9 @@ public class GameServer implements Runnable {
 	private void attack(int attack, int otherID){
 		GameServerThread temp = clients.get(findClient(otherID));
 		temp.getPlayer().damage(2);
+		if(temp.getPlayer().getHealth() <= 0){
+			temp.send("QUIT");
+		}
 		temp.send("@-" + temp.getPlayer().getHealth() + "-");
 		move(temp, temp.getPlayer().getX(),temp.getPlayer().getY());
 	}

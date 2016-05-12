@@ -30,10 +30,10 @@ public class GameServerThread extends Thread {
 		return data;
 	}
 	public void kill() throws IOException{
-		running = false;
 		socket.close();
 		streamIn.close();
 		streamOut.close();
+		running = false;
 	}
 	public boolean getTracking(){
 		return tracking;
