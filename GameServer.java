@@ -9,6 +9,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 
 public class GameServer implements Runnable {
@@ -17,6 +19,7 @@ public class GameServer implements Runnable {
 	private Graph graph;
 	private JPanel panel;
 	private JScrollPane scrollPane;
+	private JFrame frame;
 	public GameServer(int port) {
 		clients = new ArrayList<GameServerThread>();
 		graph = new Graph();
@@ -26,7 +29,7 @@ public class GameServer implements Runnable {
 		thread.start();
 	}
 	private void launch(){
-		JFrame frame = new JFrame("Game Server");
+		frame = new JFrame("Game Server");
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -41,6 +44,12 @@ public class GameServer implements Runnable {
 		frame.getContentPane().add(textArea);
 		
 		JButton btnEndGame = new JButton("End Game");
+		btnEndGame.addActionListener(
+				new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						close();						
+					}});
 		btnEndGame.setBounds(102, 235, 117, 25);
 		frame.getContentPane().add(btnEndGame);
 		
@@ -123,10 +132,9 @@ public class GameServer implements Runnable {
 	}
 	public synchronized void remove(int ID) {
 		try {
-			panel.removeAll();
 			removePlayer(clients.get(findClient(ID)));
 			clients.get(findClient(ID)).kill();
-			clients.remove(findClient(ID));
+			clients.remove(findClient(ID));;
 			for(GameServerThread foo : clients){
 				addButton(foo);
 			}
@@ -152,6 +160,14 @@ public class GameServer implements Runnable {
 			System.out.println("Client refused: maximum " + 50 + " reached.");
 	}
 	public void close(){
+		for(GameServerThread foo : clients){
+			foo.send("QUIT");
+			try {
+				foo.kill();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		System.exit(1);
 	}
 	private void addButton(GameServerThread foo){

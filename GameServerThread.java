@@ -30,9 +30,9 @@ public class GameServerThread extends Thread {
 		return data;
 	}
 	public void kill() throws IOException{
-		socket.close();
 		streamIn.close();
 		streamOut.close();
+		socket.close();
 		running = false;
 	}
 	public boolean getTracking(){
@@ -74,7 +74,7 @@ public class GameServerThread extends Thread {
 				list.removeAll(Arrays.asList(""));
 				data = list.toArray(new String[list.size()]);
 				if(!oldData.equals(data)){
-					System.out.println(Arrays.toString(data));
+					//System.out.println(Arrays.toString(data));
 					server.readInput();
 				}
 			} catch (IOException ioe) {
