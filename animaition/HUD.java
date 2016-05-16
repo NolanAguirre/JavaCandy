@@ -19,11 +19,24 @@ public class HUD extends JPanel implements Runnable {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		g.drawRect(50, 30, 200, 20); 
+		g.drawRect(10, 9, 230, 21); 
 		g.setColor(Color.green);
-		g.fillRect(50, 30, player.getHp() * 2, 20); 
+		g.fillRect(11, 10, (int)(player.getHp() * 2.3), 20); 
 		g.setColor(Color.black);
-		g.drawString(player.getHp() + "/100", 135, 45); 
+		g.drawString(player.getHp() + "/100", 110, 25); 
+		g.setColor(Color.gray);
+		g.fillRect(250, 10, 380, 80); 
+		g.fillRect(9, 40, 350, 50);
+		g.setColor(Color.white);
+		g.fillRect(12, 43, 44, 44);
+		g.fillRect(60, 43, 44, 44);
+		g.fillRect(108, 43, 44, 44);
+		g.fillRect(156, 43, 44, 44);
+		g.fillRect(204, 43, 44, 44);
+		g.fillRect(254, 13, 74, 74);
+		g.fillRect(333, 13, 74, 74);
+		g.fillRect(412, 13, 74, 74);
+		g.fillRect(491, 13, 132, 74);
 	}
 	@Override
 	public void addNotify(){
