@@ -4,7 +4,7 @@ import player.Direction;
 
 public class Enemy  extends Mob{
 	public Enemy(int x, int y){
-		new MobAnimation();
+		//new MobAnimation();
 		facing = Direction.DOWN;
 		attack = 1;
 		hp = 10;

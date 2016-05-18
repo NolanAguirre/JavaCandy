@@ -21,15 +21,16 @@ public class Map {
 	private void generate(){
 		int x = 0;
 		int y = 0;
-		for(char foo : seed.toCharArray()){
+		char[] cA = seed.toCharArray();
+		for(char foo : cA){
 			switch(foo){
 			case 'w': 
 				map[x][y] = 0;
 				walls.add(new Rectangle(x*32, y*32, 32, 32));
 				break;
 			case 'm': 
-				mobs.add(new Enemy(x,y));
-				map[x][y] = 0;
+				mobs.add(new Enemy(x*32,y*32));
+				x--;
 				break;
 			case 'b': 
 				map[x][y] = 2;

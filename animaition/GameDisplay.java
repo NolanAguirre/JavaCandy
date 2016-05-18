@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -32,7 +33,6 @@ public class GameDisplay extends JPanel implements Runnable{
 			BRICK = ImageIO.read(Sprite.SPRITESHEET).getSubimage(15*32,0,32,32);
 			DEFAULT = ImageIO.read(Sprite.SPRITESHEET).getSubimage(0,0,32,32);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -54,7 +54,8 @@ public class GameDisplay extends JPanel implements Runnable{
 					}
 				}
 			}	
-			for(Mob mob : map.getMobs()){
+		ArrayList<Mob> ml = map.getMobs();
+			for(Mob mob : ml){
 				g.drawImage(mob.getImg(), mob.getX(), mob.getY(), null);
 			}
 		}

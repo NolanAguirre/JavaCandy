@@ -36,7 +36,7 @@ public class HUD extends JPanel implements Runnable {
 		g.fillRect(254, 13, 74, 74);
 		g.fillRect(333, 13, 74, 74);
 		g.fillRect(412, 13, 74, 74);
-		g.fillRect(491, 13, 132, 74);
+		g.fillRect(491, 13, 134, 74);
 	}
 	@Override
 	public void addNotify(){
