@@ -20,6 +20,7 @@ public class GameServer implements Runnable {
 	private JPanel panel;
 	private JScrollPane scrollPane;
 	private JFrame frame;
+	
 	public GameServer(int port) {
 		clients = new ArrayList<GameServerThread>();
 		graph = new Graph();
@@ -35,6 +36,14 @@ public class GameServer implements Runnable {
 		frame.getContentPane().setLayout(null);
 		
 		JCheckBox chckbxMobs = new JCheckBox("Mobs");
+		chckbxMobs.addActionListener(
+				new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						graph.generateMobs();
+					}});
+		
+		
 		chckbxMobs.setBounds(8, 241, 94, 23);
 		frame.getContentPane().add(chckbxMobs);
 		

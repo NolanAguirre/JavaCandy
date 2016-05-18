@@ -36,7 +36,11 @@ public class Graph {
 		return seeds.get(nodes.get(graph[x][y]).getSeed());
 	}
 	public String get(int[] cords){
-		return seeds.get(nodes.get(graph[cords[0]][cords[1]]).getSeed());
+		if(mobs[cords[0]][cords[1]][0] != null){
+			return mobs[cords[0]][cords[1]][0]; 
+		}else{
+			return seeds.get(nodes.get(graph[cords[0]][cords[1]]).getSeed());
+		}
 	}
 	public void moveUp(){
 		x--;
@@ -97,7 +101,6 @@ public class Graph {
 	}
 	private void generate(){
 		ArrayList<Direction> temp = nodes.get(graph[x][y]).getDirections();
-		System.out.println(rooms);
 		if(x < graph.length-2  && x > 1 & y < graph.length-2 && y > 1 ){
 			if(graph[x-1][y] == 50 && temp.contains(Direction.UP)){
 				moveUp();
