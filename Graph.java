@@ -13,12 +13,12 @@ public class Graph {
 	private int y;
 	private int rooms;
 	private byte[][] graph;
-	private Mobs[][][]mobs;
+	private String[][][]mobs;
 	private ArrayList<String> seeds;
 	private ArrayList<Node> nodes;
 	public Graph(){
 		rooms = 0;
-		mobs = new Mobs[100][100][20];
+		mobs = new String[100][100][1];
 		seeds = new ArrayList<String>();
 		nodes = new ArrayList<Node>();
 		graph = new byte[100][100];
@@ -189,25 +189,11 @@ public class Graph {
 		String temp = "";
 		for(char foo : seed.toCharArray()){
 			temp += foo;
-			if(foo == 'f' && Math.random() > .9){
+			if(foo == 'f' && Math.random() > .96){
 				temp +='m';
 			}
 		}
-		int x = 0;
-		int y = 0;
-		int mob = 0;
-		for(char foo : temp.toCharArray()){
-			if(foo == 'm'){
-				mobs[X][Y][mob] = new Mobs(x,y);
-				x--;
-				mob++;
-			}
-			x++;
-			if(x == 20){
-				y++;
-				x = 0;
-			}
-		}
+		mobs[X][Y][0] = temp;
 	}
 	@Override
 	public String toString(){
