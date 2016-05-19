@@ -20,52 +20,49 @@ public class GameServer implements Runnable {
 	private JPanel panel;
 	private JScrollPane scrollPane;
 	private JFrame frame;
-	
+
 	public GameServer(int port) {
 		clients = new ArrayList<GameServerThread>();
 		graph = new Graph();
 		launch();
 		System.out.println("Binding to port " + port + ", please wait  ...");
-		Thread thread = new Thread(this);
-		thread.start();
 	}
 	private void launch(){
 		frame = new JFrame("Game Server");
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
-		
+
 		JCheckBox chckbxMobs = new JCheckBox("Mobs");
 		chckbxMobs.addActionListener(
 				new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						graph.generateMobs();
+                        Thread thread = new Thread(this);
+                        thread.start();
 					}});
-		
-		
 		chckbxMobs.setBounds(8, 241, 94, 23);
 		frame.getContentPane().add(chckbxMobs);
-		
+
 		JTextArea textArea = new JTextArea();
 		textArea.setBounds(8, 0, 277, 212);
 		textArea.setEditable(false);
 		frame.getContentPane().add(textArea);
-		
+
 		JButton btnEndGame = new JButton("End Game");
 		btnEndGame.addActionListener(
 				new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						close();						
+						close();
 					}});
 		btnEndGame.setBounds(102, 235, 117, 25);
 		frame.getContentPane().add(btnEndGame);
-		
+
 		scrollPane = new JScrollPane();
 		scrollPane.setBounds(297, 0, 141, 260);
 		frame.getContentPane().add(scrollPane);
-		
+
 		panel = new JPanel();
 		panel.setLayout(new GridLayout(50,1));
 		scrollPane.setViewportView(panel);

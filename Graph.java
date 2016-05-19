@@ -13,12 +13,12 @@ public class Graph {
 	private int y;
 	private int rooms;
 	private byte[][] graph;
-	private String[][][]mobs;
+	private Mobs[][][]mobs;
 	private ArrayList<String> seeds;
 	private ArrayList<Node> nodes;
 	public Graph(){
 		rooms = 0;
-		mobs = new String[100][100][1];
+		mobs = new Mobs[100][100][20];
 		seeds = new ArrayList<String>();
 		nodes = new ArrayList<Node>();
 		graph = new byte[100][100];
@@ -37,7 +37,7 @@ public class Graph {
 	}
 	public String get(int[] cords){
 		if(mobs[cords[0]][cords[1]][0] != null){
-			return mobs[cords[0]][cords[1]][0]; 
+			return mobs[cords[0]][cords[1]][0];
 		}else{
 			return seeds.get(nodes.get(graph[cords[0]][cords[1]]).getSeed());
 		}
@@ -73,9 +73,9 @@ public class Graph {
 						}else if(img.getRGB(bar,foo) ==-65356){ //pink
 							s += 'w';
 						}else if(img.getRGB(bar,foo) == -589824){ //red
-							s +='f'; 
+							s +='f';
 						}else if(img.getRGB(bar,foo) ==-1){ // old, need to update map
-							s+='f';	
+							s+='f';
 						}else{
 							s+= 'b';
 						}
@@ -97,7 +97,7 @@ public class Graph {
 			nodes.add(new Node(temp,edges.get(0).contains('f'),edges.get(1).contains('f'),edges.get(2).contains('f'),edges.get(3).contains('f')));
 			temp++;
 		}
-		
+
 	}
 	private void generate(){
 		ArrayList<Direction> temp = nodes.get(graph[x][y]).getDirections();
@@ -189,14 +189,20 @@ public class Graph {
 		}
 	}
 	private void addMobs(String seed,int X, int Y){
-		String temp = "";
+        int mobCount = 0;
+        int x = 0;
+        int y = 0;
 		for(char foo : seed.toCharArray()){
-			temp += foo;
 			if(foo == 'f' && Math.random() > .96){
-				temp +='m';
+				mobs[X][Y][mobCount] = new Mobs(x*32, y*32);
+                mobCount++;
+			}
+            x++;
+			if(x >= 20){
+				y++;
+				x=0;
 			}
 		}
-		mobs[X][Y][0] = temp;
 	}
 	@Override
 	public String toString(){

@@ -13,7 +13,6 @@ public class Mobs {
 		this.y = y;
 		health = (int)((Math.random()+1) * 2);
 		attack = (int)((Math.random()+1) * 100);
-		new MobAnimation();
 	}
 	public int getX() {
 		return x;
@@ -48,7 +47,7 @@ public class Mobs {
 			  x += randomNumber;
 			  randomNumber = (random.nextInt(9)-4);
 			  y += randomNumber;
-		  } 
+		  }
 			class Tick extends TimerTask{
 				@Override
 			    public void run(){
