@@ -149,7 +149,22 @@ public class GameClient implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
+	public void attackMob(Mob mob) {
+		try {
+			streamOut.writeUTF(mob.toString());
+			streamOut.flush();
+			if (player.getHp() <= 0) {
+				System.out.println("Game over");
+				streamOut.writeUTF("QUIT");
+				client.kill();
+				streamOut.close();
+				socket.close();
+				System.exit(0);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	public void changeDirection(Direction dir) {
 		try {
 			if (dir == Direction.RIGHT) {

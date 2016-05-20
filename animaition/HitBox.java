@@ -4,6 +4,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import map.Map;
+import mob.Enemy;
 import mob.Mob;
 import player.Direction;
 import player.Player;
@@ -13,16 +14,27 @@ public class HitBox implements Runnable {
 	public Map map;
 	private ArrayList<Rectangle> walls;
 	private GameClient client;
+	private byte frames;
 	public HitBox(Player player, GameClient client) {
 		this.player = player;
 		this.client = client;
+		frames = 0;
 		map = null;
 		Thread thread = new Thread(this);
 		thread.start();
 	}
 	private void renderHitBox() {
 		for (Mob mob : map.getMobs()) {
+			if (frames  > 200 && !(mob instanceof Player) && player.isTouching(new Rectangle(mob.getX(), mob.getY(), 32, 32))) {
+				client.sendAttack(player.getID());
+				frames = 0;
+				System.exit(1);
+			}
 			if (mob instanceof Player && !mob.equals(player) && player.isAttacking() && player.isTouching(new Rectangle(mob.getX(), mob.getY(), 32, 32))) {
+				client.sendAttack(mob.getID());
+				player.stopAttack();
+			}
+			if (mob instanceof Enemy && player.isAttacking() && player.isTouching(new Rectangle(mob.getX(), mob.getY(), 32, 32))) {
 				client.sendAttack(mob.getID());
 				player.stopAttack();
 			}
@@ -63,6 +75,7 @@ public class HitBox implements Runnable {
 			try {
 				Thread.sleep(5);
 				if(map != null){
+					frames++;
 					renderHitBox();
 				}
 			} catch (InterruptedException e) {

@@ -46,9 +46,9 @@ public class Map {
 	public ArrayList<Mob> getMobs(){
 		return mobs;
 	}
-	public void addMob(Mob player){
-		if(!mobs.contains(player)){
-			mobs.add(player);
+	public void addMob(Mob mob){
+		if(!mobs.contains(mob)){
+			mobs.add(mob);
 		}
 	}
 	public byte[][] getMapLayout() {

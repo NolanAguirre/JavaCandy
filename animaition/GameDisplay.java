@@ -56,6 +56,7 @@ public class GameDisplay extends JPanel implements Runnable{
 		ArrayList<Mob> ml = map.getMobs();
 			for(Mob mob : ml){
 				g.drawImage(mob.getImg(), mob.getX(), mob.getY(), null);
+				g.drawRect(mob.getX(), mob.getY(), 32, 32);
 			}
 		}
 		private void renderChest(Graphics g){ ////////// to do

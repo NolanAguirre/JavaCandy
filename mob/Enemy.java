@@ -50,4 +50,8 @@ public class Enemy  extends Mob{
 				this.y += y;
 			}
 	}
+	@Override
+	public String toString(){
+		return "MOB-"+ id + "-" + x + "-" + y + "-" + hp;
+	}
 }
