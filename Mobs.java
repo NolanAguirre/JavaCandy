@@ -2,26 +2,17 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-
-public class ServerMobs {
+public class Mobs {
 	private int x;
 	private int y;
 	private int health;
 	private int attack;
-	private int ID;
-	public ServerMobs(int x, int y, int ID){
+	public Mobs(int x, int y){
 		this.x = x;
 		this.y = y;
-		this.ID = ID;
 		health = (int)((Math.random()+1) * 2);
 		attack = (int)((Math.random()+1) * 100);
-	}
-	public void move(int x, int y){
-		this.x += x;
-		this.y += y;
-	}
-	public int getID(){
-		return ID;
+		new MobAnimation();
 	}
 	public int getX() {
 		return x;
@@ -44,10 +35,6 @@ public class ServerMobs {
 	public int getAttack() {
 		return attack;
 	}
-	@Override
-	public String toString(){
-		return "MOB-"+ ID + "-" + x + "-" + y + "-" + health;
-	}
 	public class MobAnimation {
 		 private Timer timer;
 		  public MobAnimation(){
@@ -60,7 +47,7 @@ public class ServerMobs {
 			  x += randomNumber;
 			  randomNumber = (random.nextInt(9)-4);
 			  y += randomNumber;
-		  }
+		  } 
 			class Tick extends TimerTask{
 				@Override
 			    public void run(){

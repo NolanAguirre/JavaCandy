@@ -13,12 +13,12 @@ public class Graph {
 	private int y;
 	private int rooms;
 	private byte[][] graph;
-	private ServerMobs[][][]mobs;
+	private ServerMob[][][]mobs;
 	private ArrayList<String> seeds;
 	private ArrayList<Node> nodes;
 	public Graph(){
 		rooms = 0;
-		mobs = new ServerMobs[100][100][50];
+		mobs = new ServerMob[100][100][50];
 		seeds = new ArrayList<String>();
 		nodes = new ArrayList<Node>();
 		graph = new byte[100][100];
@@ -38,7 +38,7 @@ public class Graph {
 	public String get(int[] cords){
 		return seeds.get(nodes.get(graph[cords[0]][cords[1]]).getSeed());
 	}
-	public ServerMobs[] getMobs(int[]cords){
+	public ServerMob[] getMobs(int[]cords){
 		return mobs[cords[0]][cords[1]];
 	}
 	public void moveUp(){
@@ -193,7 +193,7 @@ public class Graph {
         int y = 0;
 		for(char foo : seed.toCharArray()){
 			if(foo == 'f' && Math.random() > .96){
-				mobs[X][Y][mobCount] = new ServerMobs(x*32, y*32, mobCount);
+				mobs[X][Y][mobCount] = new ServerMob(x*32, y*32, mobCount);
                 mobCount++;
 			}
             x++;

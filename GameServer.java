@@ -75,7 +75,7 @@ public class GameServer implements Runnable {
 		while(true){
 			if(mobs){
 				for(GameServerThread foo : clients){
-					for(ServerMobs bar : graph.getMobs(foo.getPlayer().getRoom())){
+					for(ServerMob bar : graph.getMobs(foo.getPlayer().getRoom())){
 						if(bar != null){
 							Random ran = new Random();
 							Random ran2 = new Random();
@@ -86,7 +86,7 @@ public class GameServer implements Runnable {
 				}
 			}
 			try {
-				Thread.sleep(10);
+				Thread.sleep(40);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -133,6 +133,10 @@ public class GameServer implements Runnable {
 		}
 	}
 	private void updateMob(int[] room, int ID, int x, int y, int health){
+		if(health <=0){
+			removeMob(room,ID);
+			return;
+		}
 		graph.getMobs(room)[ID].setX(x);
 		graph.getMobs(room)[ID].setY(y);
 		graph.getMobs(room)[ID].setHealth(health);
