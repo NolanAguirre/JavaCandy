@@ -3,7 +3,6 @@ package map;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
-import mob.Enemy;
 import mob.Mob;
 
 public class Map {
@@ -27,10 +26,6 @@ public class Map {
 			case 'w': 
 				map[x][y] = 0;
 				walls.add(new Rectangle(x*32, y*32, 32, 32));
-				break;
-			case 'm': 
-				mobs.add(new Enemy(x*32,y*32));
-				x--;
 				break;
 			case 'b': 
 				map[x][y] = 2;

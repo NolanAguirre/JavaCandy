@@ -3,7 +3,8 @@ package mob;
 import player.Direction;
 
 public class Enemy  extends Mob{
-	public Enemy(int x, int y){
+	public Enemy(int id,int x, int y){
+		this.id = id;
 		//new MobAnimation();
 		facing = Direction.DOWN;
 		attack = 1;

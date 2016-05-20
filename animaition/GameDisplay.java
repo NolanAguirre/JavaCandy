@@ -23,7 +23,6 @@ public class GameDisplay extends JPanel implements Runnable{
 	private GameState gameState;
 	public GameDisplay(){
 		gameState = GameState.MAP;
-		
 		setPreferredSize(new Dimension(640, 640));
 		setDoubleBuffered(true);
 		map = null;

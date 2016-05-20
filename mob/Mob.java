@@ -28,6 +28,7 @@ public abstract class Mob implements Sprite, Movable, Combat{
 	protected int hp;
 	private boolean dead;
 	protected boolean isAttacking;
+	protected int id;
 	protected Image loadImage(int cord){
 		try{
 			return ImageIO.read(Sprite.SPRITESHEET).getSubimage(cord*32,0,32,32);
@@ -214,9 +215,10 @@ public abstract class Mob implements Sprite, Movable, Combat{
 	public void setHP(int hp){
 		this.hp = hp;
 	}
-	public int getID() {
-		return -1;
+	public int getID(){
+		return id;
 	}
-	
-
+	public void setID(int id){
+		this.id = id;
+	}
 }

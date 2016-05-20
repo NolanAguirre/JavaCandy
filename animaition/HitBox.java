@@ -22,7 +22,7 @@ public class HitBox implements Runnable {
 	}
 	private void renderHitBox() {
 		for (Mob mob : map.getMobs()) {
-			if (!mob.equals(player) && player.isAttacking() && player.isTouching(new Rectangle(mob.getX(), mob.getY(), 32, 32))) {
+			if (mob instanceof Player && !mob.equals(player) && player.isAttacking() && player.isTouching(new Rectangle(mob.getX(), mob.getY(), 32, 32))) {
 				client.sendAttack(mob.getID());
 				player.stopAttack();
 			}

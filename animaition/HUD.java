@@ -15,6 +15,8 @@ public class HUD extends JPanel implements Runnable {
 		setPreferredSize(new Dimension(640, 100));
 		setDoubleBuffered(true);
 		this.player = player;
+		Thread thread = new Thread(this);
+		thread.start();
 	}
 	@Override
 	public void paintComponent(Graphics g) {
@@ -48,7 +50,7 @@ public class HUD extends JPanel implements Runnable {
 	public void run() {
 		while(true){
 			try {
-				Thread.sleep(10);
+				Thread.sleep(50);
 				repaint();
 			} catch (InterruptedException e) {
 				e.printStackTrace();

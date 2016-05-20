@@ -8,7 +8,6 @@ import player.bag.Bag;
 
 public class Player extends Mob{
 	private Bag bag;
-	private int id;
 	public Player(int id){
 		this.id = id;
 		bag = new Bag();
@@ -56,12 +55,5 @@ public class Player extends Mob{
 		if(item.getEffect() == StatusEffect.HP && item.getType() == ItemType.POTION){
 			hp += item.getEffectAmount();
 		}
-	}
-	@Override
-	public int getID(){
-		return id;
-	}
-	public void setID(int id){
-		this.id = id;
 	}
 }
