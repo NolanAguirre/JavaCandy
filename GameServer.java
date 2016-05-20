@@ -1,5 +1,6 @@
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -20,11 +21,13 @@ public class GameServer implements Runnable {
 	private JPanel panel;
 	private JScrollPane scrollPane;
 	private JFrame frame;
-
+	private boolean mobs;
 	public GameServer(int port) {
 		clients = new ArrayList<GameServerThread>();
 		graph = new Graph();
 		launch();
+		Thread thread = new Thread(this);
+        thread.start();
 		System.out.println("Binding to port " + port + ", please wait  ...");
 	}
 	private void launch(){
@@ -38,8 +41,8 @@ public class GameServer implements Runnable {
 				new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-                        Thread thread = new Thread(this);
-                        thread.start();
+						graph.generateMobs();
+                        mobs = !mobs;
 					}});
 		chckbxMobs.setBounds(8, 241, 94, 23);
 		frame.getContentPane().add(chckbxMobs);
@@ -69,53 +72,88 @@ public class GameServer implements Runnable {
 		frame.setVisible(true);
 	}
 	public void run() {
-	}
-	public synchronized void readInput(){
-		int remove = -1;
-			for(GameServerThread foo : clients){
-				String[] data = foo.getData();
-				if(data!= null){
-					switch(data[0]){
-					case "#":
-						 removePlayer(foo);
-						if(data[1].equals("RIGHT")){
-							foo.getPlayer().moveRight();
-						}else if(data[1].equals("DOWN")){
-							foo.getPlayer().moveDown();
-						}else if(data[1].equals("LEFT")){
-							foo.getPlayer().moveLeft();
-						}else{
-							foo.getPlayer().moveUp();
+		while(true){
+			if(mobs){
+				for(GameServerThread foo : clients){
+					for(ServerMobs bar : graph.getMobs(foo.getPlayer().getRoom())){
+						if(bar != null){
+							Random ran = new Random();
+							Random ran2 = new Random();
+							bar.move(ran.nextInt(9)-4,ran2.nextInt(9)-4);
+							foo.send(bar.toString());
 						}
-						foo.send(graph.get(foo.getPlayer().getRoom()));
-						break;
-					case "$": move(foo,Integer.parseInt(data[1]), Integer.parseInt(data[2]));//simple motion $-x-y-
-						break;
-					case "@": attack(foo.getPlayer().getAttack(), Integer.parseInt(data[1]));
-						break;
-					case "QUIT": remove = foo.getID();
-						break;
+					}
 				}
 			}
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
-		if(remove > -1){
+	}
+	public synchronized void readInput(GameServerThread foo){
+		int remove = -1;
+		String[] data = foo.getData();
+		if (data != null) {
+			switch (data[0]) {
+			case "CHANGEROOM":
+				removePlayer(foo);
+				if (data[1].equals("RIGHT")) {
+					foo.getPlayer().moveRight();
+				} else if (data[1].equals("DOWN")) {
+					foo.getPlayer().moveDown();
+				} else if (data[1].equals("LEFT")) {
+					foo.getPlayer().moveLeft();
+				} else {
+					foo.getPlayer().moveUp();
+				}
+				foo.send(graph.get(foo.getPlayer().getRoom()));
+				break;
+			case "MOVE":
+				move(foo, Integer.parseInt(data[1]), Integer.parseInt(data[2]));
+				break;
+			case "ATTACK":
+				attack(foo.getPlayer().getAttack(), Integer.parseInt(data[1]));
+				break;
+			case "QUIT":
+				remove = foo.getID();
+				break;
+			case "MOB":
+				updateMob(foo.getPlayer().getRoom(), Integer.parseInt(data[1]), Integer.parseInt(data[2]),
+						Integer.parseInt(data[3]), Integer.parseInt(data[4]));
+				break;
+			case "KILLMOB":
+				removeMob(foo.getPlayer().getRoom(), Integer.parseInt(data[1]));
+				break;
+			}
+		}
+		if (remove > -1) {
 			remove(remove);
 		}
+	}
+	private void updateMob(int[] room, int ID, int x, int y, int health){
+		graph.getMobs(room)[ID].setX(x);
+		graph.getMobs(room)[ID].setY(y);
+		graph.getMobs(room)[ID].setHealth(health);
+	}
+	private void removeMob(int[] room, int ID){
+		graph.getMobs(room)[ID] = null;
 	}
 	private void move(GameServerThread foo, int x, int y){
 		foo.getPlayer().set(x,y);
 		for(GameServerThread bar: clients){
 			if(!foo.equals(bar) && foo.getPlayer().sameRoom(bar.getPlayer().getRoom())){
-				bar.send("*-" + foo.getID() + "-" + x + "-" + y + "-" + foo.getPlayer().getHealth());//* means other player
-				foo.send("*-" + bar.getID() + "-" + bar.getPlayer().getX()+ "-" + bar.getPlayer().getY() +  "-" + bar.getPlayer().getHealth());
+				bar.send("*-" + foo.toString());//* means other player
+				foo.send("*-" + bar.toString());
 			}
 		}
 	}
 	private void removePlayer(GameServerThread foo){
 		for(GameServerThread bar: clients){
 			if(!foo.equals(bar) && foo.getPlayer().sameRoom(bar.getPlayer().getRoom())){
-				bar.send("!-" + foo.getID());
-				foo.send("!-" + bar.getID());
+				bar.send("REMOVEPLAYER-" + foo.getID());
+				foo.send("REMOVEPLAYER-" + bar.getID());
 			}
 		}
 	}
@@ -125,7 +163,7 @@ public class GameServer implements Runnable {
 		if(temp.getPlayer().getHealth() <= 0){
 			temp.send("QUIT");
 		}
-		temp.send("@-" + temp.getPlayer().getHealth() + "-");
+		temp.send("ATTACK-" + temp.getPlayer().getHealth() + "-");
 		move(temp, temp.getPlayer().getX(),temp.getPlayer().getY());
 	}
 	private int findClient(int Id) {
@@ -155,8 +193,7 @@ public class GameServer implements Runnable {
 			try {
 				clients.get(players).open();
 				clients.get(players).start();
-				clients.get(players).send(graph.getCurrent());
-				clients.get(players).send("$" +"-"+ 20 + "-" + 350+ "-" + 350 + "-");
+				clients.get(players).send(graph.getStart());
 				addButton(clients.get(players));
 				players++;
 			} catch (IOException ioe) {

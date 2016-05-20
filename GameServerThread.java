@@ -65,6 +65,10 @@ public class GameServerThread extends Thread {
 		running = true;
 		super.start();
 	}
+	@Override
+	public String toString(){
+		return  ID + "-" + player.getX() + "-" + player.getY() + "-" + player.getHealth();
+	}
 	public void run() {
 		System.out.println("Server Thread " + ID + " running.");
 		while (running) {
@@ -74,8 +78,8 @@ public class GameServerThread extends Thread {
 				list.removeAll(Arrays.asList(""));
 				data = list.toArray(new String[list.size()]);
 				if(!oldData.equals(data)){
-					//System.out.println(Arrays.toString(data));
-					server.readInput();
+					System.out.println(Arrays.toString(data));
+					server.readInput(this);
 				}
 			} catch (IOException ioe) {
 				data = new String[]{"QUIT", ""+ ID};

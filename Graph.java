@@ -13,12 +13,12 @@ public class Graph {
 	private int y;
 	private int rooms;
 	private byte[][] graph;
-	private Mobs[][][]mobs;
+	private ServerMobs[][][]mobs;
 	private ArrayList<String> seeds;
 	private ArrayList<Node> nodes;
 	public Graph(){
 		rooms = 0;
-		mobs = new Mobs[100][100][20];
+		mobs = new ServerMobs[100][100][50];
 		seeds = new ArrayList<String>();
 		nodes = new ArrayList<Node>();
 		graph = new byte[100][100];
@@ -31,16 +31,15 @@ public class Graph {
 		graph[x][y] = 0;
 		generate();
 	}
-	public String getCurrent(){
+	public String getStart(){
 		System.out.println(x + " " + y + " rooms:  " + rooms);
 		return seeds.get(nodes.get(graph[x][y]).getSeed());
 	}
 	public String get(int[] cords){
-		if(mobs[cords[0]][cords[1]][0] != null){
-			return mobs[cords[0]][cords[1]][0];
-		}else{
-			return seeds.get(nodes.get(graph[cords[0]][cords[1]]).getSeed());
-		}
+		return seeds.get(nodes.get(graph[cords[0]][cords[1]]).getSeed());
+	}
+	public ServerMobs[] getMobs(int[]cords){
+		return mobs[cords[0]][cords[1]];
 	}
 	public void moveUp(){
 		x--;
@@ -194,7 +193,7 @@ public class Graph {
         int y = 0;
 		for(char foo : seed.toCharArray()){
 			if(foo == 'f' && Math.random() > .96){
-				mobs[X][Y][mobCount] = new Mobs(x*32, y*32);
+				mobs[X][Y][mobCount] = new ServerMobs(x*32, y*32, mobCount);
                 mobCount++;
 			}
             x++;
