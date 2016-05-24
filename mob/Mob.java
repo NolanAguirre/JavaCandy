@@ -1,19 +1,17 @@
 package mob;
 
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.imageio.ImageIO;
 
-import player.Combat;
 import player.Direction;
 import sprite.Movable;
 import sprite.Sprite;
 
-public abstract class Mob implements Sprite, Movable, Combat{
+public abstract class Mob implements Sprite, Movable{
 	protected Direction facing;
 	protected boolean isMoving;
 	protected boolean freezeUp;
@@ -71,11 +69,6 @@ public abstract class Mob implements Sprite, Movable, Combat{
 		}
 	}
 	@Override
-	public synchronized boolean isTouching(Rectangle wall) {
-		Rectangle hitBox = new Rectangle(x,y,32,32);
-		return hitBox.intersects(wall);
-	}
-	@Override
 	public synchronized void set(int x, int y) {
 		if(this.x < x){
 			setFacing(Direction.RIGHT);
@@ -103,7 +96,7 @@ public abstract class Mob implements Sprite, Movable, Combat{
 		this.x = x;
 		this.y = y;
 	}
-	private void preventMotion(Direction direction) {
+	public void preventMotion(Direction direction) {
 		switch(direction){
 		case LEFT:
 			freezeLeft = true;
@@ -123,21 +116,6 @@ public abstract class Mob implements Sprite, Movable, Combat{
 		
 	}
 	@Override
-	public synchronized void preventMotion(Rectangle wall) {
-		if(isTouching(new Rectangle((int)wall.getX()+2,(int)wall.getY()+42,28,1))){
-			preventMotion(Direction.UP);
-		}
-		if(isTouching(new Rectangle((int)wall.getX()+2,(int)wall.getY()-15,28,1))){
-			preventMotion(Direction.DOWN);
-		}
-		if(isTouching(new Rectangle((int)wall.getX()+46,(int)wall.getY()+2,1,28))){
-			preventMotion(Direction.LEFT);
-		}
-		if(isTouching(new Rectangle((int)wall.getX()-15,(int)wall.getY()+2,1,28))){
-			preventMotion(Direction.RIGHT);
-		}
-	}
-	@Override
 	public synchronized  void unfreeze() {
 		synchronized(this){
 			freezeUp = false;
@@ -155,14 +133,12 @@ public abstract class Mob implements Sprite, Movable, Combat{
 			dead = true;
 		}
 	} 
-	@Override
 	public boolean isDead(){
 		return dead;
 	}
 	public void attack(Mob mob){
 		mob.damage(attack);
 	}
-	@Override
 	public int getHp(){
 		return hp;
 	}

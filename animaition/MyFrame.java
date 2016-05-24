@@ -100,34 +100,26 @@ public class MyFrame extends JFrame implements WindowListener{
         @Override
         public void keyPressed(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
-            	if(!player.getFrozenRight()){
-            		player.move(5,0);
-            		player.setMoving(true);
-            	}
+            	player.move(5,0);
+            	player.setMoving(true);
             	if(player.getFacing() != Direction.RIGHT){
             		player.setFacing(Direction.RIGHT);
             	}
             }else if (e.getKeyCode() == KeyEvent.VK_LEFT  || e.getKeyCode() == KeyEvent.VK_A) {
-            	if(!player.getFrozenLeft()){
-            		player.move(-5,0);
-            		player.setMoving(true);
-            	}
+            	player.move(-5,0);
+            	player.setMoving(true);
             	if(player.getFacing() != Direction.LEFT){
             		player.setFacing(Direction.LEFT);
             	}
             }else if (e.getKeyCode() == KeyEvent.VK_UP ||  e.getKeyCode() == KeyEvent.VK_W) {
-            	if(!player.getFrozenUp()){
-            		player.move(0,-5);
-            		player.setMoving(true);
-            	}
+            	player.move(0,-5);
+            	player.setMoving(true);
             	if(player.getFacing() != Direction.UP){
             		player.setFacing(Direction.UP);
             	}
             }else if (e.getKeyCode() == KeyEvent.VK_DOWN ||  e.getKeyCode() == KeyEvent.VK_S) {
-            	if(!player.getFrozenDown()){
-            		player.move(0,5);
-            		player.setMoving(true);
-            	}
+            	player.move(0,5);
+            	player.setMoving(true);
             	if(player.getFacing() != Direction.DOWN){
             		player.setFacing(Direction.DOWN);
             	}

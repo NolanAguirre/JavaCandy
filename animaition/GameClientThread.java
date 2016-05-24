@@ -47,7 +47,6 @@ public class GameClientThread extends Thread {
 				list.removeAll(Arrays.asList(""));
 				data = list.toArray(new String[list.size()]);
 				if(!oldData.equals(data)){
-					System.out.println(Arrays.toString(data));
 					client.readInput();
 				}
 			} catch (IOException ioe) {

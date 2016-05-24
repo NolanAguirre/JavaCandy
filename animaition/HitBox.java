@@ -21,17 +21,31 @@ public class HitBox implements Runnable {
 		thread.start();
 	}
 	private void renderHitBox() {
+		Rectangle playerHitBox = new Rectangle(player.getX(), player.getY(), 32,32);
 		for (Mob mob : map.getMobs()) {
-			if (mob instanceof Player && !mob.equals(player) && player.isAttacking() && player.isTouching(new Rectangle(mob.getX(), mob.getY(), 32, 32))) {
+			if (mob instanceof Player && !mob.equals(player) && player.isAttacking()
+					&& playerHitBox.intersects(new Rectangle(mob.getX(), mob.getY(), 32, 32))) {
 				client.sendAttack(mob.getID());
 				player.stopAttack();
 			}
 		}
 		for (Mob mob : map.getMobs()) {
+			Rectangle mobHitBox = new Rectangle(mob.getX(), mob.getY(), 32,32);
 			mob.unfreeze();
 			for (Rectangle wall : walls) {
-				if (mob.isTouching(wall)) {
-					mob.preventMotion(wall);
+				if (mobHitBox.intersects(wall)) {
+					if(mobHitBox.intersects(new Rectangle((int)wall.getX()+2,(int)wall.getY()+42,28,1))){
+						mob.preventMotion(Direction.UP);
+					}
+					if(mobHitBox.intersects(new Rectangle((int)wall.getX()+2,(int)wall.getY()-15,28,1))){
+						mob.preventMotion(Direction.DOWN);
+					}
+					if(mobHitBox.intersects(new Rectangle((int)wall.getX()+46,(int)wall.getY()+2,1,28))){
+						mob.preventMotion(Direction.LEFT);
+					}
+					if(mobHitBox.intersects(new Rectangle((int)wall.getX()-15,(int)wall.getY()+2,1,28))){
+						mob.preventMotion(Direction.RIGHT);
+					}
 				}
 			}
 		}

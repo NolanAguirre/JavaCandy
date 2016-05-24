@@ -23,8 +23,16 @@ public class Player extends Mob{
 	@Override
 	public void move(int x, int y) {
 		synchronized(this){
-			this.x += x;
-			this.y += y;
+			if(!freezeLeft && x < 0){
+				this.x += x;
+			}else if(!freezeRight && x > 0){
+				this.x += x;
+			}
+			if(!freezeUp && y < 0){
+				this.y += y;
+			}else if(!freezeDown && y > 0){
+				this.y += y;
+			}
 		}
 	}
 	@Override

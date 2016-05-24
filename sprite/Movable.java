@@ -1,6 +1,6 @@
 package sprite;
 
-import java.awt.Rectangle;
+import player.Direction;
 
 public interface Movable{ // movable things, they collide  with stuff, mobs and players
 	int getX();
@@ -11,6 +11,5 @@ public interface Movable{ // movable things, they collide  with stuff, mobs and 
 	void setMoving(boolean foo);
 	void unfreeze();
 	boolean isMoving();
-	boolean isTouching(Rectangle wall);
-	void preventMotion(Rectangle wall);
+	void preventMotion(Direction direction);
 }
