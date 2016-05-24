@@ -1,6 +1,5 @@
 import java.net.*;
 import java.util.ArrayList;
-import java.util.Random;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -75,18 +74,15 @@ public class GameServer implements Runnable {
 		while(true){
 			if(mobs){
 				for(GameServerThread foo : clients){
-					for(ServerMobs bar : graph.getMobs(foo.getPlayer().getRoom())){
+					for(ServerMob bar : graph.getMobs(foo.getRoom())){
 						if(bar != null){
-							Random ran = new Random();
-							Random ran2 = new Random();
-							bar.move(ran.nextInt(9)-4,ran2.nextInt(9)-4);
 							foo.send(bar.toString());
 						}
 					}
 				}
 			}
 			try {
-				Thread.sleep(10);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -99,16 +95,22 @@ public class GameServer implements Runnable {
 			switch (data[0]) {
 			case "CHANGEROOM":
 				removePlayer(foo);
-				if (data[1].equals("RIGHT")) {
-					foo.getPlayer().moveRight();
-				} else if (data[1].equals("DOWN")) {
-					foo.getPlayer().moveDown();
-				} else if (data[1].equals("LEFT")) {
-					foo.getPlayer().moveLeft();
-				} else {
-					foo.getPlayer().moveUp();
+				if(mobs){
+					stopTracking(foo);
 				}
-				foo.send(graph.get(foo.getPlayer().getRoom()));
+				if (data[1].equals("RIGHT")) {
+					foo.moveRight();
+				} else if (data[1].equals("DOWN")) {
+					foo.moveDown();
+				} else if (data[1].equals("LEFT")) {
+					foo.moveLeft();
+				} else {
+					foo.moveUp();
+				}
+				if(mobs){
+					graph.startRoomMobs(foo.getRoom());
+				}
+				foo.send(graph.get(foo.getRoom()));
 				break;
 			case "MOVE":
 				move(foo, Integer.parseInt(data[1]), Integer.parseInt(data[2]));
@@ -120,17 +122,25 @@ public class GameServer implements Runnable {
 				remove = foo.getID();
 				break;
 			case "MOB":
-				updateMob(foo.getPlayer().getRoom(), Integer.parseInt(data[1]), Integer.parseInt(data[2]),
+				updateMob(foo.getRoom(), Integer.parseInt(data[1]), Integer.parseInt(data[2]),
 						Integer.parseInt(data[3]), Integer.parseInt(data[4]));
 				break;
 			case "KILLMOB":
-				removeMob(foo.getPlayer().getRoom(), Integer.parseInt(data[1]));
+				removeMob(foo.getRoom(), Integer.parseInt(data[1]));
 				break;
 			}
 		}
 		if (remove > -1) {
 			remove(remove);
 		}
+	}
+	private void stopTracking(GameServerThread foo){
+		for(GameServerThread bar: clients){
+			if(!foo.equals(bar) && foo.sameRoom(bar.getRoom())){
+				return;
+			}
+		}
+		graph.startRoomMobs(foo.getRoom());
 	}
 	private void updateMob(int[] room, int ID, int x, int y, int health){
 		graph.getMobs(room)[ID].setX(x);
@@ -143,7 +153,7 @@ public class GameServer implements Runnable {
 	private void move(GameServerThread foo, int x, int y){
 		foo.getPlayer().set(x,y);
 		for(GameServerThread bar: clients){
-			if(!foo.equals(bar) && foo.getPlayer().sameRoom(bar.getPlayer().getRoom())){
+			if(!foo.equals(bar) && foo.sameRoom(bar.getRoom())){
 				bar.send("*-" + foo.toString());//* means other player
 				foo.send("*-" + bar.toString());
 			}
@@ -151,7 +161,7 @@ public class GameServer implements Runnable {
 	}
 	private void removePlayer(GameServerThread foo){
 		for(GameServerThread bar: clients){
-			if(!foo.equals(bar) && foo.getPlayer().sameRoom(bar.getPlayer().getRoom())){
+			if(!foo.equals(bar) && foo.sameRoom(bar.getRoom())){
 				bar.send("REMOVEPLAYER-" + foo.getID());
 				foo.send("REMOVEPLAYER-" + bar.getID());
 			}

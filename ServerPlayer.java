@@ -3,15 +3,11 @@
 public class ServerPlayer {
 	private int x;
 	private int y;
-	private int roomX;
-	private int roomY;
 	private int attack;
 	private int health;
-	public ServerPlayer(int x, int y, int roomX, int roomY, int attack, int health){
+	public ServerPlayer(int x, int y, int attack, int health){
 		this.x = x;
 		this.y = y;
-		this.roomX = roomX;
-		this.roomY = roomY;
 		this.attack = attack;
 		this.health = health;
 	}
@@ -31,24 +27,6 @@ public class ServerPlayer {
 	}
 	public void damage(int damage){
 		health -= damage;
-	}
-	public void moveUp(){
-		roomX--;
-	}
-	public void moveDown(){
-		roomX++;
-	}
-	public void moveLeft(){
-		roomY--;
-	}
-	public void moveRight(){
-		roomY++;
-	}
-	public int[] getRoom(){
-		return new int[]{roomX,roomY};
-	}
-	public boolean sameRoom(int[] foo){
-		return foo[0] == roomX && foo[1] == roomY;
 	}
 	public int getHealth(){
 		return health;
