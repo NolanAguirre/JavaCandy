@@ -42,6 +42,9 @@ public class GameServer implements Runnable {
 					public void actionPerformed(ActionEvent arg0) {
 						graph.generateMobs();
                         mobs = !mobs;
+                        for(GameServerThread foo : clients){
+                        	graph.startRoomMobs(foo.getRoom());
+                        }
 					}});
 		chckbxMobs.setBounds(8, 241, 94, 23);
 		frame.getContentPane().add(chckbxMobs);
@@ -71,20 +74,30 @@ public class GameServer implements Runnable {
 		frame.setVisible(true);
 	}
 	public void run() {
+		int frames = 0;
 		while(true){
 			if(mobs){
-				for(GameServerThread foo : clients){
-					for(ServerMob bar : graph.getMobs(foo.getRoom())){
-						if(bar != null){
-							foo.send(bar.toString());
-						}
-					}
+				if(frames % 10 == 0){
+					sendMobs();
+				}
+				if(frames > 1000000000){
+					frames = 0;
 				}
 			}
 			try {
-				Thread.sleep(100);
+				Thread.sleep(10);
+				frames++;
 			} catch (InterruptedException e) {
 				e.printStackTrace();
+			}
+		}
+	}
+	private void sendMobs(){
+		for(GameServerThread foo : clients){
+			for(ServerMob bar : graph.getMobs(foo.getRoom())){
+				if(bar != null){
+					foo.send(bar.toString());
+				}
 			}
 		}
 	}
@@ -122,11 +135,14 @@ public class GameServer implements Runnable {
 				remove = foo.getID();
 				break;
 			case "MOB":
-				updateMob(foo.getRoom(), Integer.parseInt(data[1]), Integer.parseInt(data[2]),
-						Integer.parseInt(data[3]), Integer.parseInt(data[4]));
-				break;
-			case "KILLMOB":
-				removeMob(foo.getRoom(), Integer.parseInt(data[1]));
+				if(Integer.parseInt(data[4]) > 0){
+					updateMob(foo.getRoom(), Integer.parseInt(data[1]), Integer.parseInt(data[2]),
+							Integer.parseInt(data[3]), Integer.parseInt(data[4]));
+				}else{
+					updateMob(foo.getRoom(), Integer.parseInt(data[1]), Integer.parseInt(data[2]),
+							Integer.parseInt(data[3]), Integer.parseInt(data[4]));
+					removeMob(foo.getRoom(), Integer.parseInt(data[1]));
+				}
 				break;
 			}
 		}
@@ -140,7 +156,7 @@ public class GameServer implements Runnable {
 				return;
 			}
 		}
-		graph.startRoomMobs(foo.getRoom());
+		graph.stopRoomMobs(foo.getRoom());
 	}
 	private void updateMob(int[] room, int ID, int x, int y, int health){
 		graph.getMobs(room)[ID].setX(x);
@@ -148,7 +164,8 @@ public class GameServer implements Runnable {
 		graph.getMobs(room)[ID].setHealth(health);
 	}
 	private void removeMob(int[] room, int ID){
-		graph.getMobs(room)[ID] = null;
+		sendMobs();
+		graph.killMob(room, ID);
 	}
 	private void move(GameServerThread foo, int x, int y){
 		foo.getPlayer().set(x,y);
@@ -188,7 +205,11 @@ public class GameServer implements Runnable {
 		try {
 			removePlayer(clients.get(findClient(ID)));
 			clients.get(findClient(ID)).kill();
-			clients.remove(findClient(ID));;
+			clients.remove(findClient(ID));
+			
+			panel = new JPanel();
+			panel.setLayout(new GridLayout(50,1));
+			scrollPane.setViewportView(panel);
 			for(GameServerThread foo : clients){
 				addButton(foo);
 			}
@@ -225,6 +246,13 @@ public class GameServer implements Runnable {
 	}
 	private void addButton(GameServerThread foo){
 		JButton temp = new JButton("" + foo.getID());
+		temp.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				clients.get(findClient(Integer.parseInt(((JButton)e.getSource()).getText()))).send("QUIT");
+				System.out.println("kicked player");
+			}
+		});
 		panel.add(temp);
 		scrollPane.setViewportView(panel);
 	}

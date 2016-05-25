@@ -44,28 +44,32 @@ public class Graph {
 		return mobs[cords[0]][cords[1]];
 	}
 	public void startRoomMobs(int[]cords){
-		System.out.println("yo im working");
-		for(int x = 0; x < mapsWithMobs.size(); x++){
-			int foo = mapsWithMobs.get(x).getID()[0];
-			int bar = mapsWithMobs.get(x).getID()[1];
-			if(foo == cords[0] && bar == cords[1]){
-				mapsWithMobs.get(x).start();
-				return;
-			}			
+		ServerMap temp = findMap(cords);
+		if(temp == null){
+			temp = new ServerMap(get(cords),getMobs(cords), cords);
+			mapsWithMobs.add(temp);
 		}
-		ServerMap temp = new ServerMap(get(cords),mobs[cords[0]][cords[1]], cords);
-		temp.start();
-		mapsWithMobs.add(temp);
+		if(!temp.isRunning()){
+			temp.start();
+		}
+	}
+	public void killMob(int[]cords, int ID){
+		findMap(cords).killMob(ID);
+	}
+	public void hurtMob(int[]cords, int ID, int health){
+		findMap(cords).hurtMob(ID, health);
 	}
 	public void stopRoomMobs(int[]cords){
+		findMap(cords).kill();
+		mapsWithMobs.remove(findMap(cords));
+	}
+	public ServerMap findMap(int[]cords){
 		for(int x = 0; x < mapsWithMobs.size(); x++){
-			int foo = mapsWithMobs.get(x).getID()[0];
-			int bar = mapsWithMobs.get(x).getID()[1];
-			if(foo == cords[0] && bar == cords[1]){
-				mapsWithMobs.get(x).kill();
-				return;
-			}			
+			if(mapsWithMobs.get(x).getID()[0] == cords[0] && mapsWithMobs.get(x).getID()[1] == cords[1]){
+				return mapsWithMobs.get(x);
+			}
 		}
+		return null;
 	}
 	public void moveUp(){
 		x--;

@@ -11,6 +11,7 @@ public class ServerMap implements Runnable{
 	private ArrayList<Rectangle> walls;
 	private boolean running;
 	private final int[] ID;
+	private Thread thread;
 	public ServerMap(String seed, ServerMob[]mobs, int[]ID){
 		this.mobs = mobs;
 		walls = new ArrayList<Rectangle>();
@@ -38,8 +39,22 @@ public class ServerMap implements Runnable{
 	}
 	public void start(){
 		running = true;
-		Thread thread = new Thread(this);
+		thread = new Thread(this);
 		thread.start();
+	}
+	public void killMob(int ID){
+		for(int x = 0; x < mobs.length; x++){
+			if(mobs[x] != null && mobs[x].getID() == ID){
+				mobs[x] = null;
+			}
+		}
+	}
+	public void hurtMob(int ID, int health){
+		for(int x = 0; x < mobs.length; x++){
+			if(mobs[x] != null && mobs[x].getID() == ID){
+				mobs[x].setHealth(health);
+			}
+		}
 	}
 	private void renderHitBox() {
 		for(ServerMob mob : mobs){
@@ -65,10 +80,12 @@ public class ServerMap implements Runnable{
 			}
 		}
 	}
+	public boolean isRunning(){
+		return running;
+	}
 	@Override
 	public void run() {
 		while(running){
-			System.out.println("yo im working" + ID[0] + ID[1]);
 			renderHitBox();
 			Random random=new Random();
 			for(ServerMob foo : mobs){

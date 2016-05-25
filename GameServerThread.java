@@ -33,10 +33,11 @@ public class GameServerThread extends Thread {
 		return data;
 	}
 	public void kill() throws IOException{
+		running = false;
 		streamIn.close();
+		streamOut.flush();
 		streamOut.close();
 		socket.close();
-		running = false;
 	}
 	public int getID() {
 		return ID;
