@@ -15,13 +15,13 @@ public class Graph {
 	private byte[][] graph;
 	private ServerMob[][][]mobs;
 	private ArrayList<String> seeds;
-	private ArrayList<Node> nodes;
+	private ArrayList<ServerNode> nodes;
 	private ArrayList<ServerMap>mapsWithMobs;
 	public Graph(){
 		rooms = 0;
 		mobs = new ServerMob[100][100][50];
 		seeds = new ArrayList<String>();
-		nodes = new ArrayList<Node>();
+		nodes = new ArrayList<ServerNode>();
 		mapsWithMobs= new ArrayList<ServerMap>();
 		graph = new byte[100][100];
 		for (byte[] row: graph){
@@ -123,7 +123,7 @@ public class Graph {
 				throw(new Error("Spritesheet Not Found"));
 			}
 			seeds.add(s);
-			nodes.add(new Node(temp,edges.get(0).contains('f'),edges.get(1).contains('f'),edges.get(2).contains('f'),edges.get(3).contains('f')));
+			nodes.add(new ServerNode(temp,edges.get(0).contains('f'),edges.get(1).contains('f'),edges.get(2).contains('f'),edges.get(3).contains('f')));
 			temp++;
 		}
 
@@ -188,7 +188,7 @@ public class Graph {
 	private void setRoom(){
 		ArrayList<Integer> temp = new ArrayList<Integer>();
 		rooms++;
-		for(Node node : nodes){
+		for(ServerNode node : nodes){
 			boolean state = true;
 				for(Direction foo : getConnections()){
 					if(!node.getDirections().contains(foo)){

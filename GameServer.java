@@ -14,7 +14,7 @@ import java.awt.event.ActionListener;
 import java.io.*;
 
 public class GameServer implements Runnable {
-	private ArrayList<GameServerThread> clients;
+	private ArrayList<ServerThread> clients;
 	private int players;
 	private Graph graph;
 	private JPanel panel;
@@ -22,7 +22,7 @@ public class GameServer implements Runnable {
 	private JFrame frame;
 	private boolean mobs;
 	public GameServer(int port) {
-		clients = new ArrayList<GameServerThread>();
+		clients = new ArrayList<ServerThread>();
 		graph = new Graph();
 		launch();
 		Thread thread = new Thread(this);
@@ -42,7 +42,7 @@ public class GameServer implements Runnable {
 					public void actionPerformed(ActionEvent arg0) {
 						graph.generateMobs();
                         mobs = !mobs;
-                        for(GameServerThread foo : clients){
+                        for(ServerThread foo : clients){
                         	graph.startRoomMobs(foo.getRoom());
                         }
 					}});
@@ -93,7 +93,7 @@ public class GameServer implements Runnable {
 		}
 	}
 	private void sendMobs(){
-		for(GameServerThread foo : clients){
+		for(ServerThread foo : clients){
 			for(ServerMob bar : graph.getMobs(foo.getRoom())){
 				if(bar != null){
 					foo.send(bar.toString());
@@ -101,7 +101,7 @@ public class GameServer implements Runnable {
 			}
 		}
 	}
-	public synchronized void readInput(GameServerThread foo){
+	public synchronized void readInput(ServerThread foo){
 		int remove = -1;
 		String[] data = foo.getData();
 		if (data != null) {
@@ -150,8 +150,8 @@ public class GameServer implements Runnable {
 			remove(remove);
 		}
 	}
-	private void stopTracking(GameServerThread foo){
-		for(GameServerThread bar: clients){
+	private void stopTracking(ServerThread foo){
+		for(ServerThread bar: clients){
 			if(!foo.equals(bar) && foo.sameRoom(bar.getRoom())){
 				return;
 			}
@@ -167,17 +167,17 @@ public class GameServer implements Runnable {
 		sendMobs();
 		graph.killMob(room, ID);
 	}
-	private void move(GameServerThread foo, int x, int y){
+	private void move(ServerThread foo, int x, int y){
 		foo.getPlayer().set(x,y);
-		for(GameServerThread bar: clients){
+		for(ServerThread bar: clients){
 			if(!foo.equals(bar) && foo.sameRoom(bar.getRoom())){
 				bar.send("*-" + foo.toString());//* means other player
 				foo.send("*-" + bar.toString());
 			}
 		}
 	}
-	private void removePlayer(GameServerThread foo){
-		for(GameServerThread bar: clients){
+	private void removePlayer(ServerThread foo){
+		for(ServerThread bar: clients){
 			if(!foo.equals(bar) && foo.sameRoom(bar.getRoom())){
 				bar.send("REMOVEPLAYER-" + foo.getID());
 				foo.send("REMOVEPLAYER-" + bar.getID());
@@ -185,7 +185,7 @@ public class GameServer implements Runnable {
 		}
 	}
 	private void attack(int attack, int otherID){
-		GameServerThread temp = clients.get(findClient(otherID));
+		ServerThread temp = clients.get(findClient(otherID));
 		temp.getPlayer().damage(2);
 		if(temp.getPlayer().getHealth() <= 0){
 			temp.send("QUIT");
@@ -194,7 +194,7 @@ public class GameServer implements Runnable {
 		move(temp, temp.getPlayer().getX(),temp.getPlayer().getY());
 	}
 	private int findClient(int Id) {
-		for(GameServerThread foo: clients){
+		for(ServerThread foo: clients){
 			if(foo.getID() == Id){
 				return clients.indexOf(foo);
 			}
@@ -210,7 +210,7 @@ public class GameServer implements Runnable {
 			panel = new JPanel();
 			panel.setLayout(new GridLayout(50,1));
 			scrollPane.setViewportView(panel);
-			for(GameServerThread foo : clients){
+			for(ServerThread foo : clients){
 				addButton(foo);
 			}
 			players--;
@@ -220,7 +220,7 @@ public class GameServer implements Runnable {
 	}
 	public void addThread(Socket socket) {
 		if (players < 50) {
-			clients.add(new GameServerThread(this, socket));
+			clients.add(new ServerThread(this, socket));
 			try {
 				clients.get(players).open();
 				clients.get(players).start();
@@ -234,7 +234,7 @@ public class GameServer implements Runnable {
 			System.out.println("Client refused: maximum " + 50 + " reached.");
 	}
 	public void close(){
-		for(GameServerThread foo : clients){
+		for(ServerThread foo : clients){
 			foo.send("QUIT");
 			try {
 				foo.kill();
@@ -244,7 +244,7 @@ public class GameServer implements Runnable {
 		}
 		System.exit(1);
 	}
-	private void addButton(GameServerThread foo){
+	private void addButton(ServerThread foo){
 		JButton temp = new JButton("" + foo.getID());
 		temp.addActionListener(new ActionListener(){
 			@Override

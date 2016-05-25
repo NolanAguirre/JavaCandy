@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.io.*;
 import java.net.Socket;
 
-public class GameServerThread extends Thread {
+public class ServerThread extends Thread {
 	private DataInputStream streamIn;
 	private DataOutputStream streamOut;
 	private GameServer server;
@@ -15,7 +15,7 @@ public class GameServerThread extends Thread {
 	private boolean running;
 	private int roomX;
 	private int roomY;
-	public GameServerThread(GameServer server, Socket socket) {
+	public ServerThread(GameServer server, Socket socket) {
 		super();
 		roomX = 49;
 		roomY = 49;

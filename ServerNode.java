@@ -3,10 +3,10 @@
 import java.util.ArrayList;
 
 
-public class Node{
+public class ServerNode{
 	private ArrayList<Direction> directions;
 	private int seed;
-	public Node(int seed, boolean up, boolean down, boolean left, boolean right) {
+	public ServerNode(int seed, boolean up, boolean down, boolean left, boolean right) {
 		this.seed = seed;
 		directions = new ArrayList<Direction>();
 		if(up){
