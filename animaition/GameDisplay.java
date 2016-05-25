@@ -4,13 +4,11 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import map.Map;
-import mob.Mob;
 import sprite.Sprite;
 
 public class GameDisplay extends JPanel implements Runnable{
@@ -53,8 +51,7 @@ public class GameDisplay extends JPanel implements Runnable{
 					}
 				}
 			}	
-		ArrayList<Mob> ml = map.getMobs();
-			for(Mob mob : ml){
+			for(Sprite mob : map.getMobs()){
 				g.drawImage(mob.getImg(), mob.getX(), mob.getY(), null);
 			}
 		}

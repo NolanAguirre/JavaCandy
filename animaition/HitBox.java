@@ -4,6 +4,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import map.Map;
+import mob.Enemy;
 import mob.Mob;
 import player.Direction;
 import player.Player;
@@ -13,6 +14,7 @@ public class HitBox implements Runnable {
 	public Map map;
 	private ArrayList<Rectangle> walls;
 	private GameClient client;
+	private int frames;
 	public HitBox(Player player, GameClient client) {
 		this.player = player;
 		this.client = client;
@@ -25,8 +27,20 @@ public class HitBox implements Runnable {
 		for (Mob mob : map.getMobs()) {
 			if (mob instanceof Player && !mob.equals(player) && player.isAttacking()
 					&& playerHitBox.intersects(new Rectangle(mob.getX(), mob.getY(), 32, 32))) {
-				client.sendAttack(mob.getID());
-				player.stopAttack();
+				if(frames % 20 == 0){
+					client.sendAttack(mob.getID());
+					player.stopAttack();
+				}
+			}else if(mob instanceof Enemy && playerHitBox.intersects(new Rectangle(mob.getX(), mob.getY(), 32, 32))){
+				if(player.isAttacking()){
+					mob.damage(player.getAttack());
+					client.send(((Enemy)mob).toString());
+					player.stopAttack();
+					System.out.println(mob);
+				}
+				if(frames % 100 == 0){
+					player.damage(mob.getAttack());
+				}
 			}
 		}
 		for (Mob mob : map.getMobs()) {
@@ -49,6 +63,11 @@ public class HitBox implements Runnable {
 				}
 			}
 		}
+		for(int x = 0; x < map.getMobs().size(); x++){
+			if(map.getMobs().get(x).getHp() <= 0){
+				map.removePlayer(x);
+			}
+		}
 		if (player.getX() > 630) {
 			client.changeDirection(Direction.RIGHT);
 			player.set(10, player.getY());
@@ -66,6 +85,10 @@ public class HitBox implements Runnable {
 			player.set(player.getX(), 630);
 			player.freeze();
 		}
+		if(frames > 401){
+			player.setHP(player.getHp()+3);
+			frames = 0;
+		}
 	}
 	public void changeMap(Map map){
 		this.map = map;
@@ -77,6 +100,7 @@ public class HitBox implements Runnable {
 			try {
 				Thread.sleep(5);
 				if(map != null){
+					frames++;
 					renderHitBox();
 				}
 			} catch (InterruptedException e) {

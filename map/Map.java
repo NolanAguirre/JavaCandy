@@ -43,19 +43,25 @@ public class Map {
 			}
 		}
 	}
-	public ArrayList<Mob> getMobs(){
-		return mobs;
+	public synchronized ArrayList<Mob> getMobs(){
+		synchronized(mobs){
+			return mobs;
+		}
 	}
-	public void addMob(Mob player){
+	public synchronized void addMob(Mob player){
 		if(!mobs.contains(player)){
-			mobs.add(player);
+			synchronized(mobs){
+				mobs.add(player);
+			}
 		}
 	}
 	public byte[][] getMapLayout() {
 		return map;
 	}
-	public void removePlayer(int remove){
-		mobs.remove(remove);
+	public synchronized void removePlayer(int remove){
+		synchronized(mobs){
+			mobs.remove(remove);
+		}
 	}
 	public ArrayList<Rectangle> getWalls(){
 		return walls;

@@ -41,35 +41,27 @@ public abstract class Mob implements Sprite, Movable{
 		freezeRight = true;
 	}
 	@Override
-	public Image getImg() { // not really sure, better to have it and not need it
+	public Image getImg() {
 		return img;
 	}
 	@Override
 	public int getX() {
-		//synchronized(this){
-			return x;
-		//}
+		return x;
 	}
 	@Override
 	public int getY() {
-		//synchronized(this){
-			return y;
-		//}
+		return y;
 	}
 	@Override
 	public void setMoving(boolean foo) {
-		synchronized(this){ // not really sure, better to have it and not need it
-			isMoving = foo;
-		}
+		isMoving = foo;
 	}
 	@Override
 	public boolean isMoving() {
-		synchronized(this){
-			return isMoving;
-		}
+		return isMoving;
 	}
 	@Override
-	public synchronized void set(int x, int y) {
+	public void set(int x, int y) {
 		if(this.x < x){
 			setFacing(Direction.RIGHT);
 		}else if(this.x >x){
@@ -116,13 +108,11 @@ public abstract class Mob implements Sprite, Movable{
 		
 	}
 	@Override
-	public synchronized  void unfreeze() {
-		synchronized(this){
-			freezeUp = false;
-			freezeDown = false;
-			freezeLeft = false;
-			freezeRight = false;
-		}
+	public void unfreeze() {
+		freezeUp = false;
+		freezeDown = false;
+		freezeLeft = false;
+		freezeRight = false;
 	}
 	public int getAttack(){
 		return attack;
@@ -130,14 +120,12 @@ public abstract class Mob implements Sprite, Movable{
 	public void damage(int amount){
 		hp -= amount;
 		if(hp <=0){
+			hp = 0;
 			dead = true;
 		}
 	} 
 	public boolean isDead(){
 		return dead;
-	}
-	public void attack(Mob mob){
-		mob.damage(attack);
 	}
 	public int getHp(){
 		return hp;
@@ -189,7 +177,9 @@ public abstract class Mob implements Sprite, Movable{
 			}
 	}
 	public void setHP(int hp){
-		this.hp = hp;
+		if(hp <= 100){
+			this.hp = hp;
+		}
 	}
 	public int getID(){
 		return id;

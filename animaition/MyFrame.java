@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 import player.Direction;
 import player.Player;
 
-public class MyFrame extends JFrame implements WindowListener{
+public class MyFrame extends JFrame{
 	private Player player;
 	private GameClient temp;
 	private static final long serialVersionUID = 2L;
@@ -34,36 +34,50 @@ public class MyFrame extends JFrame implements WindowListener{
 	    pack();
 	    setTitle("Candy Box 3");
 	    setLocationRelativeTo(null);
+	    addWindowListener(new WindowListener(){
+	    	@Override
+	    	public void windowClosed(WindowEvent e){
+	    		
+	    	}
+
+			@Override
+			public void windowActivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				temp.close();				
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowIconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowOpened(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+	    });
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-	@Override
-	public void windowClosed(WindowEvent e){
-		
-	}
-	@Override
-	public void windowActivated(WindowEvent e) {
-		
-	}
-	@Override
-	public void windowClosing(WindowEvent e) {
-		temp.close();
-	}
-	@Override
-	public void windowDeactivated(WindowEvent e) {
-		
-	}
-	@Override
-	public void windowDeiconified(WindowEvent e) {
-		
-	}
-	@Override
-	public void windowIconified(WindowEvent e) {
-		
-	}
-	@Override
-	public void windowOpened(WindowEvent e) {
-		
-	}
+	
 	class CustomMouseListener implements MouseListener{
 
 		@Override

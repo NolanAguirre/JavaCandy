@@ -35,12 +35,6 @@ public class Player extends Mob{
 			}
 		}
 	}
-	@Override
-	public void attack(Mob mob){
-		//damage(mob.getAttack());
-		mob.damage(attack);
-		isAttacking = false;
-	}
 	public void setFacing(Direction dir){
 		facing = dir;
 		switch(dir){

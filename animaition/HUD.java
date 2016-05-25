@@ -43,8 +43,8 @@ public class HUD extends JPanel implements Runnable {
 	@Override
 	public void addNotify(){
 		super.addNotify();
-		Thread animationLoop = new Thread(this);
-		animationLoop.start();
+		Thread thread = new Thread(this);
+		thread.start();
 	}
 	@Override
 	public void run() {

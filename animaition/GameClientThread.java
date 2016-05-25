@@ -31,7 +31,6 @@ public class GameClientThread extends Thread {
 		try {
 			running = false;
 			streamIn.close();
-			socket.close();
 		} catch (IOException ioe) {
 			System.out.println("Error closing input stream: " + ioe);
 		}

@@ -20,8 +20,9 @@ public class GameClient implements Runnable {
 	private Socket socket = null; // server socket
 	private DataOutputStream streamOut = null; // output steam
 	private GameClientThread client = null; // input steam from server
-
+	private boolean running;
 	public GameClient(String serverName, int serverPort, Player player) {
+		running = true;
 		System.out.println("Establishing connection. Please wait ...");
 		this.player = player;
 		hud = new HUD(player);
@@ -52,7 +53,7 @@ public class GameClient implements Runnable {
 
 	public synchronized void readInput() {
 		String[] data = client.getData();
-		if (data.length > 1) {
+		if (data.length >= 1 && data[0].length() < 50) {
 			switch (data[0]) {
 			case "*":
 				addPlayer(Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]),
@@ -65,7 +66,7 @@ public class GameClient implements Runnable {
 				player.setHP(Integer.parseInt(data[1])); // attacked
 				break;
 			case "QUIT":
-				System.exit(1);
+					close();
 				break;
 			case "MOB":
 				addMob(Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]),
@@ -73,20 +74,22 @@ public class GameClient implements Runnable {
 				break;
 			}
 		} else {
-			if (data[0].length() > 50) {
-				map = new Map(data[0]);
-				map.addMob(player);
-				hitbox.changeMap(map);
-				display.changeMap(map);
-			}
+			map = new Map(data[0]);
+			map.addMob(player);
+			hitbox.changeMap(map);
+			display.changeMap(map);
 		}
 	}
 
 	public void close() {
 		try {
+			running = false;
 			streamOut.writeUTF("QUIT");
+			streamOut.flush();
 			streamOut.close();
-			System.exit(0);
+			client.kill();
+			System.out.println("now leaving game");
+			System.exit(1);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -149,7 +152,14 @@ public class GameClient implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
+	public void send(String s) {
+		try {
+			streamOut.writeUTF(s);
+			streamOut.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	public void changeDirection(Direction dir) {
 		try {
 			if (dir == Direction.RIGHT) {
@@ -181,7 +191,7 @@ public class GameClient implements Runnable {
 
 	@Override
 	public void run() {
-		while (true) {
+		while (running) {
 			try {
 				if (player.getHp() <= 0) {
 					close();

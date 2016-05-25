@@ -14,11 +14,7 @@ public class Enemy  extends Mob{
         img = loadImage(12);
         imageChain = new int[]{12};
 	}
-	@Override
-	public void attack(Mob mob){
-		//damage(mob.getAttack());
-		mob.damage(attack);
-	}
+	
 	public void move(int x, int y) {
 		boolean flag = true;
 			if(y < 0){
@@ -49,5 +45,9 @@ public class Enemy  extends Mob{
 				this.x += x;
 				this.y += y;
 			}
+	}
+	@Override
+	public String toString(){
+		return "MOB-"+ id + "-" + x + "-" + y + "-" + hp;
 	}
 }
