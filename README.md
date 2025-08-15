@@ -1,0 +1,1 @@
+so I wrote the original project in highschool and it was awesome, I learned multi-threading because I thought all games are multi threaded... Very fun learning project, this however is a non-functional version of that masterpiece. I learned a bit more about code and tried to refactor it, this is the result. I didn't ever finish refactoring it and I'm pretty sure it doesn't run.
